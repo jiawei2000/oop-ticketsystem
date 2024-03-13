@@ -9,11 +9,11 @@ public class EventDAO {
     }
 
     public void retrieveEvents() {
-        String endpoint = "oop-project.c7sgqu6yoiyv.ap-southeast-1.rds.amazonaws.com";
-        String port = "3306";
-        String db_name = "OOP_Project";
-        String uName = "admin";
-        String password = "Password123";
+        // String endpoint = "oop-project.c7sgqu6yoiyv.ap-southeast-1.rds.amazonaws.com";
+        // String port = "3306";
+        // String db_name = "OOP_Project";
+        // String uName = "admin";
+        // String password = "Password123";
         try {
             // create connection
             // Connection connection = DriverManager
@@ -24,9 +24,7 @@ public class EventDAO {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
 
-            Connection connection = DriverManager.getConnection(
-                    String.format("jdbc:mysql://%s:%s/%s", endpoint, port, db_name),
-                    uName, password);
+            Connection connection = new ConnectionManager().getConnection();
             // Create a statement
             Statement statement = connection.createStatement();
 
