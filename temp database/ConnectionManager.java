@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class ConnectionManager {
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         String endpoint = "oop-project.c7sgqu6yoiyv.ap-southeast-1.rds.amazonaws.com";
         String port = "3306";
         String db_name = "OOP_Project";

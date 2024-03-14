@@ -24,7 +24,7 @@ public class EventDAO {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
 
-            Connection connection = new ConnectionManager().getConnection();
+            Connection connection = ConnectionManager.getConnection();
             // Create a statement
             Statement statement = connection.createStatement();
 
