@@ -7,9 +7,10 @@ public class Event {
     private String time;
     private double price;
     private int stock;
+    private double cancellationFee;
 
     public Event(int eventID, int userID, String eventName, String venue, String date, String time, double price,
-            int stock) {
+            int stock, double cFee) {
         this.eventID = eventID;
         this.userID = userID;
         this.eventName = eventName;
@@ -18,11 +19,12 @@ public class Event {
         this.time = time;
         this.price = price;
         this.stock = stock;
+        this.cancellationFee = cFee;
     }
 
     public String toString() {
         return String.format(
-                "EventID: %d, UserID: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d",
-                eventID, userID, eventName, venue, date, time, price, stock);
+                "EventID: %d, UserID: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f",
+                eventID, userID, eventName, venue, date, time, price, stock, cancellationFee);
     }
 }

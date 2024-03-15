@@ -29,18 +29,19 @@ public class EventDAO {
             Statement statement = connection.createStatement();
 
             // Execute a query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM EVENT");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Event");
 
             while (resultSet.next()) {
                 int eventID = resultSet.getInt("EventID");
                 int userID = resultSet.getInt("UserID");
                 String eventName = resultSet.getString("Event_Name");
                 String venue = resultSet.getString("Venue");
-                String date = resultSet.getString("Event_Date");
-                String time = resultSet.getString("Event_Time");
+                String date = resultSet.getString("EventDate");
+                String time = resultSet.getString("EventTime");
                 double price = resultSet.getDouble("Price");
                 int stock = resultSet.getInt("Stock");
-                this.eventDAO.add(new Event(eventID, userID, eventName, venue, date, time, price, stock));
+                double cFee = resultSet.getDouble("CancellationFee");
+                this.eventDAO.add(new Event(eventID, userID, eventName, venue, date, time, price, stock, cFee));
             }
             resultSet.close();
             statement.close();
