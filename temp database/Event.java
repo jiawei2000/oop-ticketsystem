@@ -27,4 +27,36 @@ public class Event {
                 "EventID: %d, UserID: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f",
                 eventID, userID, eventName, venue, date, time, price, stock, cancellationFee);
     }
+
+    //getters
+    public int getEventID(){
+        return this.eventID;
+    }
+
+    public int getUserID(){
+        return this.userID;
+    }
+
+    public String getEventName(){
+        return this.eventName;
+    }
+    public String getVenue(){
+        return this.venue;
+    }
+    public String getDate(){
+        return this.date; 
+    }
+    public String getTime(){
+        return this.time;
+    }
+    public double getPrice(){
+        return this.price;
+    }
+    public double getCancellationFee(){
+        return this.cancellationFee;
+    }
+    public int getStock(){
+        return this.stock;
+    }
+
 }

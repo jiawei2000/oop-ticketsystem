@@ -9,26 +9,11 @@ public class EventDAO {
     }
 
     public void retrieveEvents() {
-        // String endpoint = "oop-project.c7sgqu6yoiyv.ap-southeast-1.rds.amazonaws.com";
-        // String port = "3306";
-        // String db_name = "OOP_Project";
-        // String uName = "admin";
-        // String password = "Password123";
+
         try {
-            // create connection
-            // Connection connection = DriverManager
-            // .getConnection(String.format("jdbc:mysql://%s:%s/%s?user=%s&password=%s",
-            // endpoint, port, db_name,
-            // uName, password));
-
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-
             Connection connection = ConnectionManager.getConnection();
-            // Create a statement
             Statement statement = connection.createStatement();
-
-            // Execute a query
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Event");
 
             while (resultSet.next()) {
@@ -48,7 +33,6 @@ public class EventDAO {
             connection.close();
 
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
         }
 
@@ -58,4 +42,37 @@ public class EventDAO {
         return this.eventDAO;
     }
 
+    public void insertEvent(Event event) {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String sql = "INSERT INTO Event VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            Connection connection = ConnectionManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, "" + event.getEventID());
+            preparedStatement.setString(2, "" + event.getUserID());
+            preparedStatement.setString(3, "" + event.getEventName());
+            preparedStatement.setString(4, "" + event.getVenue());
+            preparedStatement.setString(5, "" + event.getDate());
+            preparedStatement.setString(6, "" + event.getTime());
+            preparedStatement.setString(7, "" + event.getPrice());
+            preparedStatement.setString(8, "" + event.getStock());
+            preparedStatement.setString(9, "" + event.getCancellationFee());
+
+            int rowsInserted = preparedStatement.executeUpdate();
+
+            if (rowsInserted > 0) {
+                System.out.println("A new event was inserted successfully!");
+            } else {
+                System.out.println("Failed to insert event.");
+            }
+
+            preparedStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       
+    }
 }

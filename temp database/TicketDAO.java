@@ -54,9 +54,9 @@ public class TicketDAO {
             int rowsInserted = preparedStatement.executeUpdate();
 
             if (rowsInserted > 0) {
-                System.out.println("A new event was inserted successfully!");
+                System.out.println("A new Ticket was inserted successfully!");
             } else {
-                System.out.println("Failed to insert event.");
+                System.out.println("Failed to insert Ticket.");
             }
 
             preparedStatement.close();
