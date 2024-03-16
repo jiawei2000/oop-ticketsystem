@@ -60,4 +60,8 @@ public class TicketOfficerDAO {
         }
 
     }
+
+    public ArrayList<TicketOfficer> getTicketOfficerDAO(){
+        return this.ticketOfficerDAO;
+    }
 }

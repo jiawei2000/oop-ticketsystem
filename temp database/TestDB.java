@@ -6,6 +6,7 @@ public class TestDB {
         UserDAO users = new UserDAO();
         TicketOfficerDAO ticketofficers = new TicketOfficerDAO();
 
-        ticketofficers.insertTicketOfficer(new TicketOfficer(5, "userTest5", "pass123", "T", 1));
+        System.out.println(ticketofficers.getTicketOfficerDAO());
+
     }
 }
