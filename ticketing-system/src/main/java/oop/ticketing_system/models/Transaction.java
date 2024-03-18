@@ -1,31 +1,40 @@
 package oop.ticketing_system.models;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "Transaction")
 public class Transaction {
-    private int transactionID;
-    private int eventID;
-    private int userID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int transactionId;
+    private int eventId;
+    private int userId;
     private int numTicketPurchased;
     private String status;
 
-    public Transaction(int transactionID, int eventID, int userID, int numTicketPurchased, String status) {
-        this.transactionID = transactionID;
-        this.eventID = eventID;
-        this.userID = userID;
+    public Transaction() {
+    }
+
+    public Transaction(int transactionId, int eventId, int userId, int numTicketPurchased, String status) {
+        this.transactionId = transactionId;
+        this.eventId = eventId;
+        this.userId = userId;
         this.numTicketPurchased = numTicketPurchased;
         this.status = status;
     }
 
     // getters
-    public int getTransactionID() {
-        return this.transactionID;
+    public int getTransactionId() {
+        return this.transactionId;
     }
 
-    public int getEventID() {
-        return this.eventID;
+    public int getEventId() {
+        return this.eventId;
     }
 
-    public int getUserID() {
-        return this.userID;
+    public int getUserId() {
+        return this.userId;
     }
 
     public int getNumTicketPurchased() {
@@ -37,7 +46,6 @@ public class Transaction {
     }
 
     public String toString() {
-        return String.format("TransactionID: %d, EventID: %d, UserID: %d, NumTicketPurchased: %d, Status: %s",
-                transactionID, eventID, userID, numTicketPurchased, status);
+        return String.format("TransactionId: %d, EventId: %d, UserId: %d, NumTicketPurchased: %d, Status: %s", transactionId, eventId, userId, numTicketPurchased, status);
     }
 }

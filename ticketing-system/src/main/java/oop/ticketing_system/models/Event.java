@@ -1,13 +1,14 @@
 package oop.ticketing_system.models;
 
 import jakarta.persistence.*;
+
 @Entity
-@Table(name="event")
+@Table(name = "Event")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int eventID;
-    private int userID;
+    private int eventId;
+    private int userId;
     private String eventName;
     private String venue;
     private String date;
@@ -16,13 +17,14 @@ public class Event {
     private int stock;
     private double cancellationFee;
 
-    public Event(){
+    public Event() {
 
     }
-    public Event(int eventID, int userID, String eventName, String venue, String date, String time, double price,
-            int stock, double cFee) {
-        this.eventID = eventID;
-        this.userID = userID;
+
+    public Event(int eventId, int userId, String eventName, String venue, String date, String time, double price,
+                 int stock, double cFee) {
+        this.eventId = eventId;
+        this.userId = userId;
         this.eventName = eventName;
         this.venue = venue;
         this.date = date;
@@ -34,17 +36,17 @@ public class Event {
 
     public String toString() {
         return String.format(
-                "EventID: %d, UserID: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f",
-                eventID, userID, eventName, venue, date, time, price, stock, cancellationFee);
+                "EventId: %d, UserId: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f",
+                eventId, userId, eventName, venue, date, time, price, stock, cancellationFee);
     }
 
     // getters
-    public int getEventID() {
-        return this.eventID;
+    public int getEventId() {
+        return this.eventId;
     }
 
-    public int getUserID() {
-        return this.userID;
+    public int getUserId() {
+        return this.userId;
     }
 
     public String getEventName() {
