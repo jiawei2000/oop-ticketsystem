@@ -19,7 +19,6 @@ import java.util.*;
 @RequestMapping("/api/customer")
 public class CustomerController {
     @Autowired
-    // private EventService eventService;
     private CustomerService customerService;
 
     @GetMapping
@@ -27,10 +26,15 @@ public class CustomerController {
         return customerService.displayEvents();
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/transaction/{customerId}")
     public ResponseEntity<List<Transaction>> displayUserTransaction(@PathVariable int customerId){
         List<Transaction> transactions = customerService.displayTransactions(customerId);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+
+    @GetMapping("/purchasedticket/{customerId}")
+    public List<Ticket> displayPurchasedTickets(@PathVariable int customerId){
+        return customerService.displayPurchasedTickets(customerId);
     }
 }

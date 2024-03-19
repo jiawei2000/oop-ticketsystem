@@ -13,6 +13,8 @@ public class CustomerService {
     private EventRepository eventRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired 
+    private TicketRepository ticketRepository;
 
     public List<Event> displayEvents(){
         return eventRepository.findAll();
@@ -22,6 +24,9 @@ public class CustomerService {
         return transactionRepository.findByUserId(customerId);
     }
 
+    public List<Ticket> displayPurchasedTickets(int customerId){
+        return ticketRepository.findByUserId(customerId);
+    }
 
 
 }
