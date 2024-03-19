@@ -11,6 +11,7 @@ import java.util.*;
 public class CustomerService {
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
     private TransactionRepository transactionRepository;
 
     public List<Event> displayEvents(){
@@ -18,7 +19,7 @@ public class CustomerService {
     }
 
     public List<Transaction> displayTransactions(int customerId){
-        return transactionRepository.findbyUser_Id(customerId); 
+        return transactionRepository.findByUserId(customerId);
     }
 
 
