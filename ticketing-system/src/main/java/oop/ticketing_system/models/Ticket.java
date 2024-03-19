@@ -7,9 +7,9 @@ import jakarta.persistence.*;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int TicketId;
-    private int EventId;
-    private int UserId;
+    private int ticketId;
+    private int eventId;
+    private int userId;
     private String type;
     private String status;
 
@@ -17,28 +17,28 @@ public class Ticket {
     }
 
     public Ticket(int ticketId, int eventId, int userId, String type, String status) {
-        this.TicketId = ticketId;
-        this.EventId = eventId;
-        this.UserId = userId;
+        this.ticketId = ticketId;
+        this.eventId = eventId;
+        this.userId = userId;
         this.type = type;
         this.status = status;
     }
 
     public String toString() {
-        return String.format("TicketId: %d, EventId: %d, UserId: %d, Type: %s, Status: %s", TicketId, EventId, UserId, type, status);
+        return String.format("TicketId: %d, EventId: %d, UserId: %d, Type: %s, Status: %s", ticketId, eventId, userId, type, status);
     }
 
     //getter methods 
     public int getTicketId() {
-        return this.TicketId;
+        return this.ticketId;
     }
 
     public int getEventId() {
-        return this.EventId;
+        return this.eventId;
     }
 
     public int getUserId() {
-        return this.UserId;
+        return this.userId;
     }
 
     public String getType() {
