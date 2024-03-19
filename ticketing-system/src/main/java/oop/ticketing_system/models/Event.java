@@ -21,8 +21,7 @@ public class Event {
 
     }
 
-    public Event(int eventId, int userId, String eventName, String venue, String date, String time, double price,
-                 int stock, double cFee) {
+    public Event(int eventId, int userId, String eventName, String venue, String date, String time, double price, int stock, double cFee) {
         this.eventId = eventId;
         this.userId = userId;
         this.eventName = eventName;
@@ -35,9 +34,7 @@ public class Event {
     }
 
     public String toString() {
-        return String.format(
-                "EventId: %d, UserId: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f",
-                eventId, userId, eventName, venue, date, time, price, stock, cancellationFee);
+        return String.format("EventId: %d, UserId: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f", eventId, userId, eventName, venue, date, time, price, stock, cancellationFee);
     }
 
     // getters
@@ -75,6 +72,11 @@ public class Event {
 
     public int getStock() {
         return this.stock;
+    }
+
+    //setters
+    public void setCancellationFee(double cancellationFee) {
+        this.cancellationFee = cancellationFee;
     }
 
 }
