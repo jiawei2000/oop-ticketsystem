@@ -91,14 +91,14 @@ public class CustomerService {
     public void processTicketCancellation(int ticketId) {
         // conditions to refund ticket: only can cancel 48hours before event
         //output: delete ticket from ticket table, update bank balance, update transaction status, increment stock 
-        
+
         Ticket ticket = ticketRepository.getReferenceById(ticketId);
         Event event = eventRepository.getReferenceById(ticket.getEventId());
         Customer customer = customerRepository.getReferenceById(ticket.getUserId());
 
         boolean temp = isCancellationValid(event.getDate(), event.getTime(), LocalDateTime.now());
-        if (!temp){
-            throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time"); 
+        if (!temp) {
+            throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time");
         }
 
         //update bank balance 
@@ -110,7 +110,7 @@ public class CustomerService {
 
         //increment stock
         int currStock = event.getStock();
-        event.setStock(currStock+1);
+        event.setStock(currStock + 1);
         eventRepository.save(event);
 
         //update transaction {have logical issue atm}, should also update event revenue. 
@@ -120,14 +120,12 @@ public class CustomerService {
     }
 
 
-
     // helper function
     public boolean isBookingValid(String eventDate, String eventTime, LocalDateTime bookingTime) {
 
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate the maximum booking time (6 months in advance)
         LocalDateTime maxBookingTime = eventStartTime.minusMonths(6);
@@ -142,13 +140,20 @@ public class CustomerService {
     public boolean isCancellationValid(String eventDate, String eventTime, LocalDateTime cancelTime) {
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate minmium cancel time 
         LocalDateTime minCancelTime = eventStartTime.minusHours(48);
         // returns true is cancel time is after the min cancel time 
         return !cancelTime.isAfter(minCancelTime);
     }
+
+    public Customer addCustomerBalance(int customerId, double amountToAdd) {
+        Customer customer = customerRepository.getReferenceById(customerId);
+        double newBalance = customer.getBalance() + amountToAdd;
+        customer.setBalance(newBalance);
+        return customerRepository.save(customer);
+    }
+
 
 }

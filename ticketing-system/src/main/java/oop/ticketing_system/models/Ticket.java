@@ -55,4 +55,9 @@ public class Ticket {
         return this.status;
     }
 
+    // setters
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }

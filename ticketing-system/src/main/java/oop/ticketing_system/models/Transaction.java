@@ -48,4 +48,9 @@ public class Transaction {
     public String toString() {
         return String.format("TransactionId: %d, EventId: %d, UserId: %d, NumTicketPurchased: %d, Status: %s", transactionId, eventId, userId, numTicketPurchased, status);
     }
+
+    // setters
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

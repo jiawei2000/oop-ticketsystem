@@ -27,7 +27,7 @@ public class ManagerController {
 
     @GetMapping("/getEvents/{managerId}")
     public ResponseEntity<List<Event>> getEventsByManager(@PathVariable int managerId) {
-        List<Event> events = eventService.getEventsByCreatorUserId(managerId);
+        List<Event> events = eventService.getEventsByManagerId(managerId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
@@ -35,6 +35,16 @@ public class ManagerController {
     public ResponseEntity<Event> updateEventCancellationFee(@PathVariable int eventId, @RequestBody Map<String, Object> body) {
         Event event = eventService.updateEventCancellationFee(eventId, (Double) body.get("newFee"));
         return new ResponseEntity<>(event, HttpStatus.OK);
+    }
+
+    @PutMapping("/cancelEvent/{eventId}")
+    public ResponseEntity<?> cancelEvent(@PathVariable int eventId) {
+        try {
+            Event event = eventService.cancelEvent(eventId);
+            return new ResponseEntity<>(event, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 

@@ -8,7 +8,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int eventId;
-    private int userId;
+    private int managerId;
     private String eventName;
     private String venue;
     private String date;
@@ -16,14 +16,15 @@ public class Event {
     private double price;
     private int stock;
     private double cancellationFee;
+    private String status;
 
     public Event() {
 
     }
 
-    public Event(int eventId, int userId, String eventName, String venue, String date, String time, double price, int stock, double cFee) {
+    public Event(int eventId, int managerId, String eventName, String venue, String date, String time, double price, int stock, double cFee, String status) {
         this.eventId = eventId;
-        this.userId = userId;
+        this.managerId = managerId;
         this.eventName = eventName;
         this.venue = venue;
         this.date = date;
@@ -31,10 +32,11 @@ public class Event {
         this.price = price;
         this.stock = stock;
         this.cancellationFee = cFee;
+        this.status = status;
     }
 
     public String toString() {
-        return String.format("EventId: %d, UserId: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f", eventId, userId, eventName, venue, date, time, price, stock, cancellationFee);
+        return String.format("EventId: %d, ManagerId: %d, Event Name: %s, Venue: %s, Date: %s, Time: %s, Price: %.2f, Stock: %d, CancellationFee: %.2f", eventId, managerId, eventName, venue, date, time, price, stock, cancellationFee);
     }
 
     // getters
@@ -42,8 +44,8 @@ public class Event {
         return this.eventId;
     }
 
-    public int getUserId() {
-        return this.userId;
+    public int getManagerId() {
+        return this.managerId;
     }
 
     public String getEventName() {
@@ -74,13 +76,21 @@ public class Event {
         return this.stock;
     }
 
+    public String getStatus() {
+        return this.status;
+    }
+
     //setters
     public void setCancellationFee(double cancellationFee) {
         this.cancellationFee = cancellationFee;
     }
 
-    public void setStock(int num){
+    public void setStock(int num) {
         this.stock = num;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
