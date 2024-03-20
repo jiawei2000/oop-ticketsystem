@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping
     public String getTest() {
-        return userService.getTest();
+        return "";
     }
 }
 

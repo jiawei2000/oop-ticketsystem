@@ -14,7 +14,7 @@ public class TicketService {
     private TicketRepository ticketRepository;
 
     public List<Ticket> updateTicketStatusByEventId(int eventId, String newStatus) {
-        List<Ticket> tickets = ticketRepository.findByEventId(eventId);
+        List<Ticket> tickets = ticketRepository.findByEventIdAndStatus(eventId, "Active");
         for (Ticket ticket : tickets) {
             ticket.setStatus(newStatus);
         }

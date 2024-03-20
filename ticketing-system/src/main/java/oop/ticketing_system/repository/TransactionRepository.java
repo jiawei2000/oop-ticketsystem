@@ -10,4 +10,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     public List<Transaction> findByEventId(int eventId);
 
+    public List<Transaction> findByEventIdAndStatus(int eventId, String status);
+
 }

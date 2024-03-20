@@ -15,10 +15,11 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-    @Autowired CustomerService customerService;
+    @Autowired
+    CustomerService customerService;
 
     public List<Transaction> updateTransactionStatusByEventId(int eventId, String newStatus) {
-        List<Transaction> transactions = transactionRepository.findByEventId(eventId);
+        List<Transaction> transactions = transactionRepository.findByEventIdAndStatus(eventId, "Active");
         for (Transaction transaction : transactions) {
             transaction.setStatus(newStatus);
         }
@@ -26,9 +27,9 @@ public class TransactionService {
     }
 
     public List<Transaction> refundUsersByEventId(int eventId, double amount) {
-        List<Transaction> transactions = transactionRepository.findByEventId(eventId);
+        List<Transaction> transactions = transactionRepository.findByEventIdAndStatus(eventId, "Cancelled");
         for (Transaction transaction : transactions) {
-            customerService.addCustomerBalance(transaction.getUserId(), amount);
+            customerService.addCustomerBalance(transaction.getUserId(), amount * transaction.getNumTicketPurchased());
         }
         return transactions;
     }
