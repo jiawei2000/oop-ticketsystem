@@ -28,7 +28,6 @@ public class ManagerController {
     @GetMapping("/getEvents/{managerId}")
     public ResponseEntity<List<Event>> getEventsByManager(@PathVariable int managerId) {
         List<Event> events = eventService.getEventsByCreatorUserId(managerId);
-
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 

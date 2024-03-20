@@ -73,7 +73,7 @@ public class CustomerService {
 
         // once all conditions are met, ticket creation
         for (int i = 0; i < qtyPurchased; i++) {
-            ticketRepository.save(new Ticket(0, eventId, customerId, "Online", "Active"));
+//            ticketRepository.save(new Ticket(0, eventId, customerId, "Online", "Active"));
         }
 
         // update bank balance

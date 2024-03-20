@@ -9,6 +9,7 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ticketId;
     private int eventId;
+    private int transactionId;
     private int userId;
     private String type;
     private String status;
@@ -16,16 +17,17 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(int ticketId, int eventId, int userId, String type, String status) {
+    public Ticket(int ticketId, int eventId, int userId, int transactionId, String type, String status) {
         this.ticketId = ticketId;
         this.eventId = eventId;
+        this.transactionId = transactionId;
         this.userId = userId;
         this.type = type;
         this.status = status;
     }
 
     public String toString() {
-        return String.format("TicketId: %d, EventId: %d, UserId: %d, Type: %s, Status: %s", ticketId, eventId, userId, type, status);
+        return "Ticket ID: " + this.ticketId + ", Event ID: " + this.eventId + ", User ID: " + this.userId + ", Transaction ID: " + this.transactionId + ", Type: " + this.type + ", Status: " + this.status;
     }
 
     //getter methods 
@@ -35,6 +37,10 @@ public class Ticket {
 
     public int getEventId() {
         return this.eventId;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
     }
 
     public int getUserId() {
