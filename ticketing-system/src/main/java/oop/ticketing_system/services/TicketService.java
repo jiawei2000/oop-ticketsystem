@@ -20,4 +20,21 @@ public class TicketService {
         }
         return ticketRepository.saveAll(tickets);
     }
+
+    public int getTicketsSoldByEventId(int eventId) {
+        return ticketRepository.countByEventIdAndStatus(eventId, "Active");
+    }
+
+    public int getTicketsRefundedByEventId(int eventId) {
+        return ticketRepository.countByEventIdAndStatus(eventId, "Refunded");
+    }
+
+    public int getTicketsAttendedByEventId(int eventId) {
+        return ticketRepository.countByEventIdAndStatus(eventId, "Used");
+    }
+
+    public int getTicketsCancelledByEventId(int eventId) {
+        return ticketRepository.countByEventIdAndStatus(eventId, "Cancelled");
+    }
+
 }

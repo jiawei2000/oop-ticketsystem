@@ -1,6 +1,7 @@
 package oop.ticketing_system.controllers;
 
 import oop.ticketing_system.models.Event;
+import oop.ticketing_system.models.EventReport;
 import oop.ticketing_system.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,13 @@ public class ManagerController {
         }
     }
 
-
+    @GetMapping("/getEventStatistics/{eventId}")
+    public ResponseEntity<?> getEventStatistics(@PathVariable int eventId) {
+        try {
+            EventReport report = eventService.getEventStatistics(eventId);
+            return new ResponseEntity<>(report, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
