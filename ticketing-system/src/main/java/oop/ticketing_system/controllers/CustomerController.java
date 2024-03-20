@@ -47,4 +47,14 @@ public class CustomerController {
         }
     }
 
+    @DeleteMapping("/purchasedTickets/{ticketId}")
+    public  ResponseEntity<String> cancelTicket(@PathVariable int ticketId){
+        try {
+            customerService.processTicketCancellation(ticketId);
+            return new ResponseEntity<>("Ticket cancelled successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    };
+
 }

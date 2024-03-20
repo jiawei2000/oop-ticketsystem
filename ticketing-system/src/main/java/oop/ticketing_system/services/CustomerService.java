@@ -38,7 +38,7 @@ public class CustomerService {
     public Transaction processTransaction(Transaction transaction) {
         // EventIDretrieve for event details
         // Customer ID //retrieve balance
-
+        //should also check for existing purchased tickets
         int qtyPurchased = transaction.getNumTicketPurchased();
         int eventId = transaction.getEventId();
         int customerId = transaction.getUserId();
@@ -46,47 +46,82 @@ public class CustomerService {
         Event event = eventRepository.getReferenceById(eventId);
         Customer customer = customerRepository.getReferenceById(customerId);
 
-        //check1 for booking must be witin 6months in advance and 24hrs before booking time
+        // check1 for booking must be witin 6months in advance and 24hrs before booking
+        // time
         String eventDate = event.getDate();
         String eventTime = event.getTime();
         boolean temp = isBookingValid(eventDate, eventTime, LocalDateTime.now());
-        if (!temp){
+        if (!temp) {
             throw new IllegalArgumentException("purchase not within timeframe");
         }
 
-        //check2 for qty limit
-        if (qtyPurchased >5){
+        // check2 for qty limit
+        if (qtyPurchased > 5) {
             throw new IllegalArgumentException("Purchased quantity is over maximum limit");
-        } 
+        }
 
-        //check3 if qty > stock 
-        if (qtyPurchased > event.getStock()){
+        // check3 if qty > stock
+        if (qtyPurchased > event.getStock()) {
             throw new IllegalArgumentException("Insufficient stock");
         }
 
-        //check4 for sufficent balance 
-        double totalCost = qtyPurchased*event.getPrice();
-        if (totalCost > customer.getBalance()){
+        // check4 for sufficent balance
+        double totalCost = qtyPurchased * event.getPrice();
+        if (totalCost > customer.getBalance()) {
             throw new IllegalArgumentException("Insufficient Account Balance");
         }
 
-        //once all conditions are met, ticket creation
-        for (int i = 0; i < qtyPurchased; i++){
+        // once all conditions are met, ticket creation
+        for (int i = 0; i < qtyPurchased; i++) {
             ticketRepository.save(new Ticket(0, eventId, customerId, "Online", "Active"));
         }
 
-        //update bank balance 
-        customer.setBalance(customer.getBalance()-totalCost);
+        // update bank balance
+        customer.setBalance(customer.getBalance() - totalCost);
         customerRepository.save(customer);
 
-        //update ticket stock 
+        // update ticket stock
         event.setStock(event.getStock() - qtyPurchased);
         eventRepository.save(event);
 
-        //create and return transaction
+        // create and return transaction
         return transactionRepository.save(transaction);
     }
 
+    public void processTicketCancellation(int ticketId) {
+        // conditions to refund ticket: only can cancel 48hours before event
+        //output: delete ticket from ticket table, update bank balance, update transaction status, increment stock 
+        
+        Ticket ticket = ticketRepository.getReferenceById(ticketId);
+        Event event = eventRepository.getReferenceById(ticket.getEventId());
+        Customer customer = customerRepository.getReferenceById(ticket.getUserId());
+
+        boolean temp = isCancellationValid(event.getDate(), event.getTime(), LocalDateTime.now());
+        if (!temp){
+            throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time"); 
+        }
+
+        //update bank balance 
+        double cusBalance = customer.getBalance();
+        double ticketPrice = event.getPrice();
+        double cancelPrice = event.getCancellationFee();
+        customer.setBalance(cusBalance + ticketPrice - cancelPrice);
+        customerRepository.save(customer);
+
+        //increment stock
+        int currStock = event.getStock();
+        event.setStock(currStock+1);
+        eventRepository.save(event);
+
+        //update transaction {have logical issue atm}, should also update event revenue. 
+
+        //delete ticket
+        ticketRepository.delete(ticket);
+    }
+
+
+
+    // helper function
     public boolean isBookingValid(String eventDate, String eventTime, LocalDateTime bookingTime) {
 
         String[] tempDate = eventDate.split("-");
@@ -102,6 +137,18 @@ public class CustomerService {
 
         // Check if the booking time is within the valid range
         return !bookingTime.isBefore(maxBookingTime) && !bookingTime.isAfter(minBookingTime);
+    }
+
+    public boolean isCancellationValid(String eventDate, String eventTime, LocalDateTime cancelTime) {
+        String[] tempDate = eventDate.split("-");
+        String[] tempTime = eventTime.split(":");
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
+                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+
+        // Calculate minmium cancel time 
+        LocalDateTime minCancelTime = eventStartTime.minusHours(48);
+        // returns true is cancel time is after the min cancel time 
+        return !cancelTime.isAfter(minCancelTime);
     }
 
 }
