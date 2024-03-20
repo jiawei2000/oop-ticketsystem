@@ -79,4 +79,8 @@ public class Event {
         this.cancellationFee = cancellationFee;
     }
 
+    public void setStock(int num){
+        this.stock = num;
+    }
+
 }

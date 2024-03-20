@@ -2,15 +2,13 @@ package oop.ticketing_system.controllers;
 
 import oop.ticketing_system.models.*;
 import oop.ticketing_system.services.CustomerService;
-// import oop.ticketing_system.services.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-
 
 import java.util.*;
 
@@ -22,19 +20,31 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
-    public List<Event> displayAllEvents(){
+    public List<Event> displayAllEvents() {
         return customerService.displayEvents();
     }
 
-    @GetMapping("/transaction/{customerId}")
-    public ResponseEntity<List<Transaction>> displayUserTransaction(@PathVariable int customerId){
+    @GetMapping("/transactionHistory/{customerId}")
+    public ResponseEntity<List<Transaction>> displayUserTransactions(@PathVariable int customerId) {
         List<Transaction> transactions = customerService.displayTransactions(customerId);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    @GetMapping("/purchasedticket/{customerId}")
-    public List<Ticket> displayPurchasedTickets(@PathVariable int customerId){
+    @GetMapping("/purchasedTickets/{customerId}")
+    public List<Ticket> displayPurchasedTickets(@PathVariable int customerId) {
         return customerService.displayPurchasedTickets(customerId);
     }
+
+    @PostMapping("/transaction")
+    public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
+
+        try {
+            Transaction temp = customerService.processTransaction(transaction);
+            return new ResponseEntity<>(temp, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

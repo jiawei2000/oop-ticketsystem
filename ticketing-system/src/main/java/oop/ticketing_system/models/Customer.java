@@ -32,4 +32,9 @@ public class Customer extends User {
     public String toString() {
         return super.toString() + String.format(", Email: %s, Balance: %.2f", email, balance);
     }
+
+    //setter 
+    public void setBalance(double newBalance){
+        this.balance = newBalance;
+    }
 }
