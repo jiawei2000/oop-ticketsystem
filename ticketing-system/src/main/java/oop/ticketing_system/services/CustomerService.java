@@ -23,9 +23,6 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public List<Event> displayEvents() {
-        return eventRepository.findAll();
-    }
 
     public List<Transaction> displayTransactions(int customerId) {
         return transactionRepository.findByUserId(customerId);
@@ -44,6 +41,7 @@ public class CustomerService {
         int customerId = transaction.getUserId();
 
         Event event = eventRepository.getReferenceById(eventId);
+        
         Customer customer = customerRepository.getReferenceById(customerId);
 
         // check1 for booking must be witin 6months in advance and 24hrs before booking
@@ -60,6 +58,18 @@ public class CustomerService {
             throw new IllegalArgumentException("Purchased quantity is over maximum limit");
         }
 
+        List<Transaction> previousTransactions = transactionRepository.findByEventIdAndUserId(eventId, customerId);
+        int ticketCount = 0;
+        for (Transaction tran: previousTransactions){
+            if(tran.getStatus().equals("Active")){
+                ticketCount += tran.getNumTicketPurchased();
+            }
+        }
+        //check3 check for existing active transaction 
+        if (qtyPurchased > 5-ticketCount){
+            throw new IllegalArgumentException("Purchase limit is 5. you currently have " + ticketCount + " active tickets");
+        }
+
         // check3 if qty > stock
         if (qtyPurchased > event.getStock()) {
             throw new IllegalArgumentException("Insufficient stock");
@@ -72,8 +82,9 @@ public class CustomerService {
         }
 
         // once all conditions are met, ticket creation
+        Transaction temp1 = transactionRepository.save(transaction);
         for (int i = 0; i < qtyPurchased; i++) {
-//            ticketRepository.save(new Ticket(0, eventId, customerId, "Online", "Active"));
+           ticketRepository.save(new Ticket(0, eventId, customerId,temp1.getTransactionId() ,"Online", "Active"));
         }
 
         // update bank balance
@@ -85,38 +96,43 @@ public class CustomerService {
         eventRepository.save(event);
 
         // create and return transaction
-        return transactionRepository.save(transaction);
+        return temp1;
     }
 
-    public void processTicketCancellation(int ticketId) {
+    public Transaction processTransactionCancellation(int transactionId) {
         // conditions to refund ticket: only can cancel 48hours before event
-        //output: delete ticket from ticket table, update bank balance, update transaction status, increment stock 
+        //new output: change ticket status, change transaction status, update bankbalance, increment stock 
 
-        Ticket ticket = ticketRepository.getReferenceById(ticketId);
-        Event event = eventRepository.getReferenceById(ticket.getEventId());
-        Customer customer = customerRepository.getReferenceById(ticket.getUserId());
+        Transaction transaction = transactionRepository.getReferenceById(transactionId);
+        Event event = eventRepository.getReferenceById(transaction.getEventId());
+        Customer customer = customerRepository.getReferenceById(transaction.getUserId());
 
         boolean temp = isCancellationValid(event.getDate(), event.getTime(), LocalDateTime.now());
         if (!temp) {
             throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time");
         }
 
+    
         //update bank balance 
         double cusBalance = customer.getBalance();
-        double ticketPrice = event.getPrice();
-        double cancelPrice = event.getCancellationFee();
-        customer.setBalance(cusBalance + ticketPrice - cancelPrice);
+        double totalRefundAmt = (event.getPrice()-event.getCancellationFee())*transaction.getNumTicketPurchased();
+        customer.setBalance(cusBalance + totalRefundAmt);
         customerRepository.save(customer);
 
         //increment stock
         int currStock = event.getStock();
-        event.setStock(currStock + 1);
+        event.setStock(currStock + transaction.getNumTicketPurchased());
         eventRepository.save(event);
 
-        //update transaction {have logical issue atm}, should also update event revenue. 
-
-        //delete ticket
-        ticketRepository.delete(ticket);
+        //change ticket status to refunded  
+        List<Ticket> tickets = ticketRepository.findByTransactionId(transactionId);
+        for (Ticket ticket : tickets){
+            ticket.setStatus("Refunded");
+            ticketRepository.save(ticket);
+        }
+        transaction.setStatus("Refunded");
+        return transactionRepository.save(transaction);
+        
     }
 
 

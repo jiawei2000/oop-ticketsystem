@@ -9,5 +9,5 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Integer> {
     public List<Event> findByManagerId(int managerId);
 
-
+    public List<Event> findByStatus(String status);
 }

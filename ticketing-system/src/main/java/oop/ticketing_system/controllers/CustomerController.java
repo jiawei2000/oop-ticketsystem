@@ -1,7 +1,7 @@
 package oop.ticketing_system.controllers;
 
 import oop.ticketing_system.models.*;
-import oop.ticketing_system.services.CustomerService;
+import oop.ticketing_system.services.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.ErrorResponse;
@@ -18,12 +18,16 @@ import java.util.*;
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private EventService eventService;
 
-    @GetMapping
-    public List<Event> displayAllEvents() {
-        return customerService.displayEvents();
+    //displays "Active" events
+    @GetMapping("/displayEvents")
+    public ResponseEntity<List<Event>> displayAllEvents() {
+        return new ResponseEntity<>(eventService.getEventsByStatus("Active"), HttpStatus.OK);
     }
 
+    //displays transaction history
     @GetMapping("/transactionHistory/{customerId}")
     public ResponseEntity<List<Transaction>> displayUserTransactions(@PathVariable int customerId) {
         List<Transaction> transactions = customerService.displayTransactions(customerId);
@@ -31,6 +35,7 @@ public class CustomerController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
+    //display purchased ticket
     @GetMapping("/purchasedTickets/{customerId}")
     public List<Ticket> displayPurchasedTickets(@PathVariable int customerId) {
         return customerService.displayPurchasedTickets(customerId);
@@ -47,11 +52,11 @@ public class CustomerController {
         }
     }
 
-    @DeleteMapping("/purchasedTickets/{ticketId}")
-    public  ResponseEntity<String> cancelTicket(@PathVariable int ticketId){
+    @PutMapping("/cancelTransaction/{transactionId}")
+    public  ResponseEntity<?> cancelTicket(@PathVariable int transactionId){
         try {
-            customerService.processTicketCancellation(ticketId);
-            return new ResponseEntity<>("Ticket cancelled successfully", HttpStatus.OK);
+            Transaction trans = customerService.processTransactionCancellation(transactionId);
+            return new ResponseEntity<>(trans, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

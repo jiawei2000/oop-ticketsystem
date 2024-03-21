@@ -32,6 +32,10 @@ public class EventService {
         return eventRepository.findByManagerId(userId);
     }
 
+    public List<Event> getEventsByStatus(String status){
+        return eventRepository.findByStatus(status);
+    }
+
     public Event getEventById(int eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         Event event = optionalEvent.orElse(null);
