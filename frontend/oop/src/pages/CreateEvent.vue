@@ -1,6 +1,6 @@
 <template>
     <v-card
-  class="ma-6"
+  class="ma-5"
   max-width="95%"
   color="white"
 >
@@ -12,29 +12,40 @@
         <form class="event-listing-form">
           <div class="form-group">
             <label>Event Name:</label>
-            <select>
-              <option value="" disabled selected>Select Role</option>
-              <!-- Add options dynamically here -->
-              <option value="role1">Role 1</option>
-              <option value="role2">Role 2</option>
-            </select>
+            <v-textarea
+            row-height="15"
+            rows="1"
+            variant="outlined"
+        ></v-textarea>
           </div>
           <div class="form-group">
-            <label>Description:</label>
-            <v-textarea label="Label"></v-textarea>
-          </div>
-          <div>
-            <label>Department:</label>
-            <select>
-              <option value="" disabled selected>Select Dept</option>
-            </select>
-            <span>Note: Please select a department.</span>
+            <label>Venue</label>
+            <v-textarea
+            row-height="15"
+            rows="1"
+            variant="outlined"
+        ></v-textarea>
           </div>
           <div class="form-group">
-            <label>Closing Date:</label>
-            <input type="date" />
-            <span>Note: Please select a date in the future.</span>
+            <label>Ticket Price</label>
+            <v-textarea
+            row-height="15"
+            rows="1"
+            variant="outlined"
+        ></v-textarea>
           </div>
+          <div class="form-group">
+            <label>Number of Tickets Available</label>
+            <v-textarea
+            row-height="15"
+            rows="1"
+            variant="outlined"
+        ></v-textarea>
+           </div>
+        <div class="form-group">
+          <label for="closingDate">Closing Date:</label>
+          <input type="date" id="closingDate" required />
+        </div>
           <button type="submit" class="btn btn-primary">Create Event Listing</button>
         </form>
       </div>
