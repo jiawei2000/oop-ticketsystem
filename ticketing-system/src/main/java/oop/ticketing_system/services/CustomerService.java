@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 //java time package
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.*;
 
 @Service
 public class CustomerService {

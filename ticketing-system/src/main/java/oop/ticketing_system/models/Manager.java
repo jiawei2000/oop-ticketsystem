@@ -11,4 +11,7 @@ public class Manager extends User {
         super.setType("Manager");
     }
 
+    public Manager(int userId, String userName, String pwd) {
+        super(userId, userName, pwd, "Manager");
+    }
 }
