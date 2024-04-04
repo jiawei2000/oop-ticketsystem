@@ -19,7 +19,7 @@ const routes = [
         component: () => import('@/pages/Login.vue')}
 
     ]
-  }
+  },
 ]
 
 const router = createRouter({
