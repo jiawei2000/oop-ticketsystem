@@ -1,26 +1,10 @@
 <template>
-    <v-card>
-        <v-card-title>
-            <h1>Login</h1>
-        </v-card-title>
-        <v-card-text>
-            <v-form>
-                <v-text-field
-                    v-model="email"
-                    label="Email"
-                    required
-                ></v-text-field>
-                <v-text-field
-                    v-model="password"
-                    label="Password"
-                    required
-                    type="password"
-                ></v-text-field>
-                <v-btn
-                    @click="login"
-                    color="primary"
-                >Login</v-btn>
-            </v-form>
-        </v-card-text>
-    </v-card>
+    <v-container class="fill-height" fluid>
+      <v-row class="fill-height align-center justify-center">
+        <v-col cols="12" sm="8" md="6">
+          <LoginForm />
+        </v-col>
+      </v-row>
+    </v-container>
 </template>
+  
