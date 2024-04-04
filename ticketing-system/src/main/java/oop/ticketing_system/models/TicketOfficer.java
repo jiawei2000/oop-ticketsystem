@@ -14,8 +14,8 @@ public class TicketOfficer extends User {
     }
 
 
-    public TicketOfficer(int userId, String userName, String password, String type, int eventId) {
-        super(userId, userName, password, type);
+    public TicketOfficer(int userId, String userName, String password, int eventId) {
+        super(userId, userName, password, "TicketOfficer");
         this.eventId = eventId;
     }
 
