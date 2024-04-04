@@ -1,26 +1,24 @@
 <template>
-    <v-app>
 
       <AppBar />
   
-      <!-- <default-view/>
+      <default-view/>
   
-      <AppFooter /> -->
-    </v-app>
-  </template>
+      <AppFooter />
+</template>
   
   <script>
-//   import DefaultView from './View.vue'
-//   import AppBar from '@/components/AppBar.vue'
-//   import AppFooter from '@/components/AppFooter.vue'
+  import DefaultView from './View.vue'
+  import AppBar from '@/components/AppBar.vue'
+  import AppFooter from '@/components/AppFooter.vue'
   
-//   export default {
-//     name: 'Home',
-//     components: {
-//       AppBar,
-//       AppFooter,
-//       DefaultView
-//     }
-//   }
+  export default {
+    name: 'Home',
+    components: {
+      AppBar,
+      AppFooter,
+      DefaultView
+    }
+  }
   </script>
   

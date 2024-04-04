@@ -1,7 +1,26 @@
 <template>
-    <v-app>
-        <div class="default-bg">
-            <default-view class="h-100"/>
-        </div>
-    </v-app>
+    <v-card>
+        <v-card-title>
+            <h1>Login</h1>
+        </v-card-title>
+        <v-card-text>
+            <v-form>
+                <v-text-field
+                    v-model="email"
+                    label="Email"
+                    required
+                ></v-text-field>
+                <v-text-field
+                    v-model="password"
+                    label="Password"
+                    required
+                    type="password"
+                ></v-text-field>
+                <v-btn
+                    @click="login"
+                    color="primary"
+                >Login</v-btn>
+            </v-form>
+        </v-card-text>
+    </v-card>
 </template>
