@@ -23,6 +23,11 @@ const routes = [
         name: 'Home',
         component: () => import('@/pages/Home.vue')
       },
+      {
+        path: 'createEvent',
+        name: 'createEvent',
+        component: () => import('@/pages/CreateEvent.vue')
+      },
 
     ]
   },
