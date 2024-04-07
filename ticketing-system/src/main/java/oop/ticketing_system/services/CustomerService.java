@@ -4,6 +4,7 @@ import oop.ticketing_system.models.*;
 import oop.ticketing_system.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class CustomerService {
         return ticketRepository.findByUserId(customerId);
     }
 
-    public Transaction processTransaction(Transaction transaction) {
+    public TransactionTickets processTransaction(Transaction transaction) {
         // EventIDretrieve for event details
         // Customer ID //retrieve balance
         // should also check for existing purchased tickets
@@ -79,14 +80,14 @@ public class CustomerService {
 
         // once all conditions are met, ticket creation
         // Create Transaction & Tickets
-        Transaction newTransaction = transactionService.purchaseTicket(transaction, "Online");
+        TransactionTickets transactionTickets = transactionService.purchaseTicket(transaction, "Online");
 
         // update bank balance
         customer.setBalance(customer.getBalance() - totalCost);
         customerRepository.save(customer);
 
         // Return Transaction
-        return newTransaction;
+        return transactionTickets;
     }
 
     public Transaction processTransactionCancellation(int transactionId) {

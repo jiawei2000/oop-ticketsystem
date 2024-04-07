@@ -1,9 +1,6 @@
 package oop.ticketing_system.services;
 
-import oop.ticketing_system.models.Customer;
-import oop.ticketing_system.models.Event;
-import oop.ticketing_system.models.Ticket;
-import oop.ticketing_system.models.Transaction;
+import oop.ticketing_system.models.*;
 import oop.ticketing_system.repository.CustomerRepository;
 import oop.ticketing_system.repository.EventRepository;
 import oop.ticketing_system.repository.TicketRepository;
@@ -28,7 +25,7 @@ public class TransactionService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public Transaction purchaseTicket(Transaction transaction, String type) {
+    public TransactionTickets purchaseTicket(Transaction transaction, String type) {
 
         if (!checkSufficientStock(transaction.getEventId(), transaction.getNumTicketPurchased())) {
             throw new IllegalArgumentException("Insufficient stock for event " + transaction.getEventId());
@@ -38,10 +35,14 @@ public class TransactionService {
         Transaction newTransaction = transactionRepository.save(transaction);
         int qty = newTransaction.getNumTicketPurchased();
 
+        //Create TransactionTickets
+        TransactionTickets transactionTickets = new TransactionTickets(newTransaction);
+
         //Create Tickets
         for (int i = 0; i < qty; i++) {
             Ticket ticketTemplate = new Ticket(0, newTransaction.getEventId(), newTransaction.getUserId(), newTransaction.getTransactionId(), type, "Active");
-            ticketRepository.save(ticketTemplate);
+            Ticket createdTicket = ticketRepository.save(ticketTemplate);
+            transactionTickets.addTicket(createdTicket);
         }
 
         //Update Ticket qty in Event
@@ -49,7 +50,7 @@ public class TransactionService {
         event.setStock(event.getStock() - qty);
         eventRepository.save(event);
 
-        return newTransaction;
+        return transactionTickets;
     }
 
     public boolean checkSufficientStock(int eventId, int requestedQty) {

@@ -4,7 +4,6 @@ import oop.ticketing_system.models.*;
 import oop.ticketing_system.services.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
@@ -45,7 +44,7 @@ public class CustomerController {
     public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
 
         try {
-            Transaction temp = customerService.processTransaction(transaction);
+            TransactionTickets temp = customerService.processTransaction(transaction);
             return new ResponseEntity<>(temp, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -53,13 +52,12 @@ public class CustomerController {
     }
 
     @PutMapping("/cancelTransaction/{transactionId}")
-    public  ResponseEntity<?> cancelTicket(@PathVariable int transactionId){
+    public ResponseEntity<?> cancelTicket(@PathVariable int transactionId) {
         try {
             Transaction trans = customerService.processTransactionCancellation(transactionId);
             return new ResponseEntity<>(trans, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    };
-
+    }
 }
