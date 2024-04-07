@@ -8,16 +8,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
     private String userName;
-    private String pwd;
+    private String password;
     private String type;
 
     public User() {
     }
 
-    public User(int userId, String userName, String pwd, String type) {
+    public User(int userId, String userName, String password, String type) {
         this.userId = userId;
         this.userName = userName;
-        this.pwd = pwd;
+        this.password = password;
         this.type = type;
     }
 
@@ -31,7 +31,7 @@ public class User {
     }
 
     public String getPassword() {
-        return this.pwd;
+        return this.password;
     }
 
     public String getUserType() {
@@ -39,7 +39,7 @@ public class User {
     }
 
     public String toString() {
-        return String.format("UserID: %d, Username: %s, Password: %s, Type: %s", userId, userName, pwd, type);
+        return String.format("UserID: %d, Username: %s, Password: %s, Type: %s", userId, userName, password, type);
     }
 
     //setters

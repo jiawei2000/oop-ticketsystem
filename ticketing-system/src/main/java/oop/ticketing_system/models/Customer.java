@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 @Table(name = "Customer")
 public class Customer extends User {
     private String email;
-    private double balance;
+    private double balance = 1000;
 
     public Customer() {
         super();
@@ -18,7 +18,9 @@ public class Customer extends User {
         super(userID, userName, pwd, type);
         this.email = email;
         this.balance = balance;
+
     }
+
 
     //getter
     public String getEmail() {
