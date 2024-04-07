@@ -7,6 +7,7 @@ import oop.ticketing_system.repository.TicketOfficerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 @Service
 public class UserService {
     @Autowired
@@ -28,7 +29,42 @@ public class UserService {
     public TicketOfficer createTicketOfficer(TicketOfficer ticketOfficer){
         return tickerOfficerRepository.save(ticketOfficer);
     }
-    
 
+    public boolean authenticateCustomer(String username, String password){
+        List<Customer> customers = customerRepository.findByUserName(username);
+        if (!customers.isEmpty()){
+            for(Customer customer: customers){
+                if(customer.getPassword().equals(password)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean authenticateManager(String username, String password){
+        List<Manager> managers = managerRepository.findByUserName(username);
+        if (!managers.isEmpty()){
+            for(Manager manager: managers){
+                if(manager.getPassword().equals(password)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean authenticateTicketOfficer(String username, String password){
+        List<TicketOfficer> ticketOfficers = tickerOfficerRepository.findByUserName(username);
+        if (!ticketOfficers.isEmpty()){
+            for(TicketOfficer ticketOfficer: ticketOfficers){
+                if(ticketOfficer.getPassword().equals(password)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
 
 }
