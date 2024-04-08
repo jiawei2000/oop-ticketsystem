@@ -2,7 +2,6 @@
 import axios from "@axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 
 const router = useRouter();
 
@@ -10,8 +9,8 @@ const events = ref([]);
 const searchQuery = ref("");
 
 const getEvents = async () => {
-    const displayEvent_URL = "events";
-    axios.get(displayEvent_URL)
+    const displayEventURL = "events";
+    axios.get(displayEventURL)
         .then(response => {
             const data = response.data
             events.value = data;
@@ -38,7 +37,6 @@ onMounted(() => {
 
 <template>
     <section>
-
         <VCard>
             <VCardText>
                 <div class="mb-3">
