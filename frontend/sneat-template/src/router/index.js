@@ -36,8 +36,13 @@ const router = createRouter({
           path: 'form-layouts',
           component: () => import('../pages/form-layouts.vue'),
         },
+        {
+          path: 'displayEvents',
+          component: () => import('../pages/customer/displayEvent.vue'),
+        },
       ],
     },
+
     {
       path: '/',
       component: () => import('../layouts/blank.vue'),

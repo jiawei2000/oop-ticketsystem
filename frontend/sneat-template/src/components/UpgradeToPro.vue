@@ -1,5 +1,5 @@
 <template>
-  <VBtn
+  <!-- <VBtn
     color="error"
     class="product-upgrade-to-pro"
     href="https://themeselection.com/item/sneat-vuetify-vuejs-admin-template/"
@@ -43,7 +43,7 @@
         </VCardText>
       </VCard>
     </VMenu>
-  </VBtn>
+  </VBtn> -->
 </template>
 
 <style lang="scss" scoped>
