@@ -28,6 +28,11 @@ const routes = [
         name: 'createEvent',
         component: () => import('@/pages/CreateEvent.vue')
       },
+      {
+        path: 'updateEvent',
+        name: 'updateEvent',
+        component: () => import('@/pages/UpdateEvent.vue')
+      },
 
     ]
   },
