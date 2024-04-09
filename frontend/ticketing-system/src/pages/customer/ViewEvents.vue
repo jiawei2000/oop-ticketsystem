@@ -30,7 +30,7 @@ onMounted(() => {
 // Modal related script
 //What is needed for purchase? event ID, customer ID, Quantity
 const modalOpen = ref(false);
-const formData = ref({
+const formData = reactive({
     eventId: 0,
     eventName: "",
     venue: "",
@@ -41,6 +41,15 @@ const formData = ref({
     cancellationFee: 0,
     quantity: 0
 });
+// const eventId = 0;
+// const eventName = "A";
+// const venue = "B";
+// const date = "C";
+// const time = "D";
+// const price = 0;
+// const stock = 0;
+// const cancellationFee = 0;
+
 
 const openModal = () => {
     modalOpen.value = true;
@@ -50,25 +59,21 @@ const closeModal = () => {
     modalOpen.value = false;
 }
 
-const viewDetails = async (currEventId) => {
+const viewDetails = (currEventId) => {
     // router.push({ path: 'ViewEventDetails/' + eventId });
     console.log(currEventId);
     console.log(formData.value);
     console.log(events.value);
-    const allEvents = events.value;
-    for (const event of allEvents) {
+    for (const event of events.value) {
         if (event.eventId == currEventId) {
             formData.eventId = event.eventId;
             formData.eventName = event.eventName;
-            console.log("b: " + formData.eventName); //populating works here
             formData.venue = event.venue;
             formData.date = formatDate(event.date);
             formData.time = event.time;
             formData.price = event.price;
             formData.stock = event.stock;
             formData.cancellationFee = event.cancellationFee;
-            console.log("updated");
-            console.log(formData.value); // but final check is empty 
             break;
         }
     }
@@ -107,8 +112,7 @@ const validateQuantity = (value) => {
                             <!-- event name -->
                             <v-row>
                                 <v-col cols="12">
-                                    <v-text-field v-model="formData.eventName" label="Event Name"
-                                        readonly></v-text-field>
+                                    <v-text-field v-model="formData.eventName" label="Event Name" readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <!-- venue -->
