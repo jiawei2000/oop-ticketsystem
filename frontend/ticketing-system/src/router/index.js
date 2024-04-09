@@ -2,25 +2,29 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router'
 import routes from '~pages'
 
+console.log('Routes: ', routes);
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
             redirect: to => {
-                // const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-                // const userRole = (userData && userData.role) ? userData.role : null
-                // if (userRole === 'admin')
-                //     return { name: 'dashboards-crm' }
-                // if (userRole === 'client')
-                //     return { name: 'access-control' }
-
                 return { name: 'login', query: to.query }
             },
         },
         //Routes are auto created based on Pages folder structure
         ...setupLayouts(routes),
     ],
+})
+
+router.beforeEach(to => {
+    // If not logged in redirect to login page
+    if (localStorage.getItem('UserId') === null && (to.name != 'login' && to.name != 'register')) {
+        console.log("Not logged in");
+        return { name: 'login', query: to.query }
+    }
+    
 })
 
 

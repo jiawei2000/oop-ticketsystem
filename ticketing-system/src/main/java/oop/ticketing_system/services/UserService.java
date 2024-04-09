@@ -30,16 +30,16 @@ public class UserService {
         return tickerOfficerRepository.save(ticketOfficer);
     }
 
-    public boolean authenticateCustomer(String username, String password){
+    public Customer authenticateCustomer(String username, String password){
         List<Customer> customers = customerRepository.findByUserName(username);
         if (!customers.isEmpty()){
             for(Customer customer: customers){
                 if(customer.getPassword().equals(password)){
-                    return true;
+                    return customer;
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public boolean authenticateManager(String username, String password){

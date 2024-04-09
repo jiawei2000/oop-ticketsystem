@@ -3,23 +3,24 @@ import authV1BottomShape from '@images/svg/bottom-illustration.svg?raw'
 import authV1TopShape from '@images/svg/top-illustration.svg?raw'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
-import { requiredValidator } from '@validators';
-import { reactive } from 'vue';
+import { reactive } from 'vue'
 import axios from "@axios";
+import { requiredValidator, emailValidator, lengthValidator } from '@validators';
 import { useAppAbility } from '@/plugins/casl/useAppAbility';
 
 const form = reactive({
     username: '',
+    email: '',
     password: '',
 })
 
 const isPasswordVisible = ref(false)
-const refForm = ref();
 const isLoading = ref(false);
+const refForm = ref();
 const ability = useAppAbility()
 
-const login = async () => {
-    const loginCustomerURL = "users/loginCustomer";
+const register = async () => {
+    const registerCustomerURL = "users/createCustomer";
 
     isLoading.value = true;
     const valid = await refForm.value.validate()
@@ -30,12 +31,13 @@ const login = async () => {
 
     let data = {
         userName: form.username,
-        password: form.password
+        password: form.password,
+        email: form.email,
     }
 
-    console.log("Data: ", data);
+    console.log("Regisetering user with data: ", data);
 
-    axios.post(loginCustomerURL, data)
+    axios.post(registerCustomerURL, data)
         .then(response => {
             console.log("Response: ", response.data);
             localStorage.setItem("UserType", response.data.userType);
@@ -55,9 +57,6 @@ const login = async () => {
         })
         .catch(error => {
             console.log(error.message);
-            if (error.response.data) {
-                console.log("Error: ", error.response.data);
-            }
         });
     isLoading.value = false;
 }
@@ -75,7 +74,7 @@ const login = async () => {
             <VNodeRenderer :nodes="h('div', { innerHTML: authV1BottomShape })"
                 class="auth-v1-bottom-shape d-none d-sm-block text-primary" />
 
-            <VCard class="auth-card px-2" max-width="450">
+            <VCard class="auth-card px-2" max-width="448">
                 <VCardItem class="justify-center">
                     <template #prepend>
                         <div class="d-flex">
@@ -90,37 +89,40 @@ const login = async () => {
 
                 <VCardText>
                     <h6 class="text-h5 text-center mb-1">
-                        Customer Portal
+                        Customer Registration
                     </h6>
                 </VCardText>
 
                 <VCardText>
                     <VForm @submit.prevent ref="refForm">
                         <VRow>
-
+                            <!-- Username -->
                             <VCol cols="12">
                                 <VTextField v-model="form.username" autofocus label="Username"
                                     :rules="[requiredValidator]" />
-                            </VCol>
 
-                            <VCol cols="12">
+                                <!-- email -->
+                                <VTextField v-model="form.email" label="Email" type="email" class="my-4"
+                                    :rules="[requiredValidator, emailValidator]" />
+
+                                <!-- password -->
                                 <VTextField v-model="form.password" label="Password"
                                     :type="isPasswordVisible ? 'text' : 'password'"
                                     :append-inner-icon="isPasswordVisible ? 'bx-hide' : 'bx-show'"
                                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                                    :rules="[requiredValidator]" />
+                                    :rules="[requiredValidator, lengthValidator(form.password, 8)]" />
 
-                                <!-- login button -->
-                                <VBtn class="mt-4" block type="submit" @click="login()">
-                                    Login
+                                <VBtn class="mt-4" block type="submit" @click="register()">
+                                    <span v-if="!isLoading">Sign Up</span>
+                                    <VProgressCircular v-if="isLoading" indeterminate color="success" :size="25" />
                                 </VBtn>
                             </VCol>
 
-                            <!-- create account -->
-                            <VCol cols="12" class="text-center text-base d-flex justify-center flex-wrap">
-                                <span>New on our platform?</span>
-                                <RouterLink class="text-primary ms-2" :to="{ name: 'register' }">
-                                    Create an account
+                            <!-- login instead -->
+                            <VCol cols="12" class="d-flex justify-center flex-column flex-sm-row text-center text-base">
+                                <span>Already have an account?</span>
+                                <RouterLink class="text-primary ms-2" :to="{ name: 'login' }">
+                                    Sign in instead
                                 </RouterLink>
                             </VCol>
 
@@ -139,4 +141,4 @@ const login = async () => {
 <route lang="yaml">
     meta:
       layout: blank
-</route>
+ </route>
