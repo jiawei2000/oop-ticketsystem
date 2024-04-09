@@ -8,6 +8,7 @@ const venue = ref('');
 const date = ref('');
 const time = ref('');
 const price = ref('');
+const cancellationFee = ref('');
 const stock = ref('');
 const isLoading = ref(false);
 
@@ -28,6 +29,7 @@ const createEvent = async () => {
         time: time.value,
         price: price.value,
         stock: stock.value,
+        cancellationFee: cancellationFee.value,
         managerId: 1,
     }
 
@@ -61,7 +63,7 @@ const createEvent = async () => {
 
                         <VCol cols="12">
                             <AppDateTimePicker v-model="date" label="Date" placeholder="Date"
-                                :config="{ altInput: true, altFormat: 'j-F-Y', dateFormat: 'd-m-Y' }"
+                                :config="{ altInput: true, altFormat: 'j-F-Y', dateFormat: 'Y-m-d' }"
                                 :rules="[requiredValidator]" />
                         </VCol>
 
@@ -77,13 +79,18 @@ const createEvent = async () => {
                         </VCol>
 
                         <VCol cols="6">
+                            <VTextField v-model="cancellationFee" label="Cancellation Fee" type="number"
+                                placeholder="Cancellation Fee" :rules="[requiredValidator]" />
+                        </VCol>
+
+                        <VCol cols="6">
                             <VTextField v-model="stock" label="Stock" type="number" placeholder="Stock"
                                 :rules="[requiredValidator]" />
                         </VCol>
 
                         <VCol cols="12" class="d-flex gap-4">
                             <VBtn type="submit" @click="createEvent()">
-                                <span v-if="!isLoading">Submit</span>
+                                <span v-if="!isLoading">Create</span>
                                 <VProgressCircular v-if="isLoading" indeterminate color="success" :size="25" />
                             </VBtn>
 
