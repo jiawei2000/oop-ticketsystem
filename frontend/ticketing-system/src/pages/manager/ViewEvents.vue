@@ -90,9 +90,9 @@ const viewDetails = (currEventId) => {
     openModal();
 }
 
-const editEvent = async (currEventId) => {
+const editEvent = (currEventId) => {
+ // router.push({ path: 'EditEventDetails/' + currEventId });
 
-    // WIP
 
 }
 const cancelMessage = ref('');
@@ -128,7 +128,7 @@ const cancelEvent = async (currEventId) => {
                 </v-card-title>
                 <v-card-text>
                     <!-- Form fields -->
-                    <v-form @submit.prevent="editEvent">
+                    <v-form @submit.prevent="cancelEvent">
                         <v-container>
                             <!-- event name -->
                             <v-row>
@@ -177,7 +177,7 @@ const cancelEvent = async (currEventId) => {
                 </v-card-text>
                 <v-card-actions class="justify-end">
                     <v-btn @click="closeModal">Close</v-btn>
-                    <v-btn color="primary" @click="editEvent"><v-icon>mdi-file-edit</v-icon>Edit</v-btn>
+                    <v-btn color="primary" @click="editEvent"><v-icon>mdi-file-edit</v-icon>Edit Event</v-btn>
                     <v-btn color="red" @click="cancelConfirmModalOpen"><v-icon>mdi-close-octagon</v-icon>Cancel Event</v-btn>
                 </v-card-actions>
             </v-card>
@@ -193,7 +193,7 @@ const cancelEvent = async (currEventId) => {
                     <v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>"Warning: Are you sure you want to cancel this event? This action cannot be undone!"
                 </v-card-text>
                 <v-card-actions class="justify-center">
-                    <v-btn color="red" @click="cancelEvent">Confirm</v-btn>
+                    <v-btn color="red" @click="cancelEvent(event.eventId)">Confirm</v-btn>
                     <v-btn color="primary" @click="cancelConfirmCloseModal">Close</v-btn>
                 </v-card-actions>
             </v-card>
@@ -248,6 +248,8 @@ const cancelEvent = async (currEventId) => {
                             <td>${{ event.cancellationFee }}</td>
                             <td>
                                 <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
+                                <v-btn color="primary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
+                                <v-btn color="red" variant="outlined" @click="cancelConfirmModalOpen">Cancel Event</v-btn>
                             </td>
                         </tr>
                     </tbody>
