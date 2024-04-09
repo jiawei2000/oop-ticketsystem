@@ -115,7 +115,7 @@ const validateQuantity = (value) => {
     if (value >= 1 && value <= 5) {
         return true; // Valid numeric input
     } else {
-        return 'Quantity must be within purhcase limits of 1 to 5'; // Error message for invalid input
+        return 'Quantity must be within purchase limits of 1 to 5'; // Error message for invalid input
     }
 }
 </script>
