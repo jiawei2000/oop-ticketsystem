@@ -167,12 +167,19 @@ const validateQuantity = (value) => {
                                     <v-text-field v-model="formData.stock" label="Stock" readonly></v-text-field>
                                 </v-col>
                             </v-row>
+                            <!-- Quantity -->
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="formData.quantity" label="Specify Quantity" type=number min=0
+                                        max=5 :rules="[validateQuantity]"></v-text-field>
+                                </v-col>
+                            </v-row>
                         </v-container>
                     </v-form>
                 </v-card-text>
                 <v-card-actions class="justify-end">
                     <v-btn @click="closeModal">Close</v-btn>
-                    <v-btn color="primary" @click="makePurchase"><v-icon>mdi-cart</v-icon>Edit</v-btn>
+                    <v-btn color="primary" @click="makePurchase"><v-icon>mdi-cart</v-icon>Purchase</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
