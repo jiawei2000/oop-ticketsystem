@@ -42,28 +42,28 @@ public class UserService {
         return null;
     }
 
-    public boolean authenticateManager(String username, String password){
+    public Manager authenticateManager(String username, String password){
         List<Manager> managers = managerRepository.findByUserName(username);
         if (!managers.isEmpty()){
             for(Manager manager: managers){
                 if(manager.getPassword().equals(password)){
-                    return true;
+                    return manager;
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    public boolean authenticateTicketOfficer(String username, String password){
+    public TicketOfficer authenticateTicketOfficer(String username, String password){
         List<TicketOfficer> ticketOfficers = tickerOfficerRepository.findByUserName(username);
         if (!ticketOfficers.isEmpty()){
             for(TicketOfficer ticketOfficer: ticketOfficers){
                 if(ticketOfficer.getPassword().equals(password)){
-                    return true;
+                    return ticketOfficer;
                 }
             }
         }
-        return false;
+        return null;
     }
     
 

@@ -68,22 +68,24 @@ public class UserController {
     }
 
     @PostMapping("/loginManager")
-    public ResponseEntity<String> loginManager(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<?> loginManager(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("userName");
         String password = credentials.get("password");
-        if (userService.authenticateManager(username, password)) {
-            return new ResponseEntity<>("Login successful", HttpStatus.OK);
+        Manager response = userService.authenticateManager(username, password);
+        if (response != null) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/loginTicketOfficer")
-    public ResponseEntity<String> loginTicketOfficer(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<?> loginTicketOfficer(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("userName");
         String password = credentials.get("password");
-        if (userService.authenticateTicketOfficer(username, password)) {
-            return new ResponseEntity<>("Login successful", HttpStatus.OK);
+        TicketOfficer response = userService.authenticateTicketOfficer(username, password);
+        if (response != null) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
