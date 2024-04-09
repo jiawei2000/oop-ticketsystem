@@ -8,7 +8,7 @@ const searchQuery = ref("");
 const events = ref([]);
 //Event script
 const getEvents = async () => {
-    const displayEventURL = "events";
+    const displayEventURL = "customer/displayEvents"
     axios.get(displayEventURL)
         .then(response => {
             const data = response.data
@@ -29,7 +29,6 @@ onMounted(() => {
 
 // Modal related script
 //What is needed for purchase? event ID, customer ID, Quantity
-const modalOpen = ref(false);
 const formData = reactive({
     eventId: 0,
     eventName: "",
@@ -41,22 +40,24 @@ const formData = reactive({
     cancellationFee: 0,
     quantity: 0
 });
-// const eventId = 0;
-// const eventName = "A";
-// const venue = "B";
-// const date = "C";
-// const time = "D";
-// const price = 0;
-// const stock = 0;
-// const cancellationFee = 0;
 
-
+//for View Event Details modal 
+const modalOpen = ref(false);
 const openModal = () => {
     modalOpen.value = true;
 }
 
 const closeModal = () => {
     modalOpen.value = false;
+}
+
+//for purchasingMessage modal 
+const purchasingModalOpen = ref(false);
+const purchasingOpenModal = () => {
+    purchasingModalOpen.value = true;
+}
+const purchasingCloseModal = () => {
+    purchasingModalOpen.value = false;
 }
 
 const viewDetails = (currEventId) => {
@@ -79,12 +80,34 @@ const viewDetails = (currEventId) => {
     }
     openModal();
 }
-
+const purchaseMessage = ref('');
+const isSuccessful = ref(true);
 const makePurchase = async () => {
     // Submit form logic here
-    console.log('hi');
-    console.log('Form submitted:', formData.value);
-    closeModal(); // Close the modal after form submission
+    // console.log(formData.eventId, parseInt(formData.quantity));
+    let send_transaction_data = {
+        "eventId": formData.eventId,
+        "userId": 1,
+        "numTicketPurchased": parseInt(formData.quantity)
+    };
+
+    const createTransactionURL = "customer/transaction";
+    await axios.post(createTransactionURL, send_transaction_data)
+        .then(async response => {
+            console.log(response.data);
+            purchaseMessage.value = "Purchase Success";
+            closeModal();
+            isSuccessful.value = true;
+            purchasingOpenModal();
+        })
+        .catch(error => {
+            console.log(error.response.data);
+            purchaseMessage.value = error.response.data;
+            closeModal();
+            isSuccessful.value = false;
+            purchasingOpenModal();
+        });
+
 }
 
 const validateQuantity = (value) => {
@@ -92,7 +115,7 @@ const validateQuantity = (value) => {
     if (value >= 1 && value <= 5) {
         return true; // Valid numeric input
     } else {
-        return 'Quantity must be within purhcase limites of 1 to 5'; // Error message for invalid input
+        return 'Quantity must be within purhcase limits of 1 to 5'; // Error message for invalid input
     }
 }
 </script>
@@ -112,7 +135,8 @@ const validateQuantity = (value) => {
                             <!-- event name -->
                             <v-row>
                                 <v-col cols="12">
-                                    <v-text-field v-model="formData.eventName" label="Event Name" readonly></v-text-field>
+                                    <v-text-field v-model="formData.eventName" label="Event Name"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <!-- venue -->
@@ -132,14 +156,14 @@ const validateQuantity = (value) => {
                             </v-row>
                             <!-- Price, Stock, and cancellation Fee -->
                             <v-row>
-                                <v-col cols="4">
+                                <v-col cols="4" sm="12">
                                     <v-text-field v-model="formData.price" label="Price($)" readonly></v-text-field>
                                 </v-col>
-                                <v-col cols="4">
+                                <v-col cols="4" sm="12">
                                     <v-text-field v-model="formData.cancellationFee" label="Cancellation Fee($)"
                                         readonly></v-text-field>
                                 </v-col>
-                                <v-col cols="4">
+                                <v-col cols="4" sm="12">
                                     <v-text-field v-model="formData.stock" label="Stock" readonly></v-text-field>
                                 </v-col>
                             </v-row>
@@ -153,9 +177,25 @@ const validateQuantity = (value) => {
                         </v-container>
                     </v-form>
                 </v-card-text>
-                <v-card-actions>
-                    <v-btn color="primary" @click="makePurchase">Purchase</v-btn>
+                <v-card-actions class="justify-end">
                     <v-btn @click="closeModal">Close</v-btn>
+                    <v-btn color="primary" @click="makePurchase"><v-icon>mdi-cart</v-icon>Purchase</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- Purchase message modal -->
+        <v-dialog v-model="purchasingModalOpen" max-width="500">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Purchase Message</span>
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <p v-if = isSuccessful><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{ purchaseMessage }}</p>
+                    <p v-else><v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>{{ purchaseMessage }}</p>
+                </v-card-text>
+                <v-card-actions class="justify-center">
+                    <v-btn color="primary" @click="purchasingCloseModal">Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

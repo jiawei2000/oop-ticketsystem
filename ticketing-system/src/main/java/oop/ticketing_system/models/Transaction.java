@@ -11,7 +11,7 @@ public class Transaction {
     private int eventId;
     private int userId;
     private int numTicketPurchased;
-    private String status;
+    private String status = "Active";
 
     public Transaction() {
     }

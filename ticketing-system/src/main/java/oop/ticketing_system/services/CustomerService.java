@@ -45,18 +45,17 @@ public class CustomerService {
 
         Customer customer = customerRepository.getReferenceById(customerId);
 
-        // check1 for booking must be witin 6months in advance and 24hrs before booking
-        // time
+        // check1 for booking must be witin 6months in advance and 24hrs before booking time
         String eventDate = event.getDate();
         String eventTime = event.getTime();
         boolean temp = isBookingValid(eventDate, eventTime, LocalDateTime.now());
         if (!temp) {
-            throw new IllegalArgumentException("purchase not within timeframe");
+            throw new IllegalArgumentException("Purchase must be made within 6 months in advance and at least 24 hours before the booking time.");
         }
 
         // check2 for qty limit
-        if (qtyPurchased > 5) {
-            throw new IllegalArgumentException("Purchased quantity is over maximum limit");
+        if (qtyPurchased > 5 || qtyPurchased<=0) {
+            throw new IllegalArgumentException("The purchase quantity exceeds 5 or is equal to or less than 0.");
         }
 
         List<Transaction> previousTransactions = transactionRepository.findByEventIdAndUserId(eventId, customerId);
@@ -75,7 +74,7 @@ public class CustomerService {
         // check4 for sufficent balance
         double totalCost = qtyPurchased * event.getPrice();
         if (totalCost > customer.getBalance()) {
-            throw new IllegalArgumentException("Insufficient Account Balance");
+            throw new IllegalArgumentException("Insufficient Account Balance. Total Cost of the transaction is $" + totalCost);
         }
 
         // once all conditions are met, ticket creation
