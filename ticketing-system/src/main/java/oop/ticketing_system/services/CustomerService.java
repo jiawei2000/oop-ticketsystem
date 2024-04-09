@@ -2,6 +2,7 @@ package oop.ticketing_system.services;
 
 import oop.ticketing_system.models.*;
 import oop.ticketing_system.repository.*;
+import oop.ticketing_system.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
@@ -21,9 +22,10 @@ public class CustomerService {
     private TicketRepository ticketRepository;
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private EventService eventService;
 
     public List<Transaction> displayTransactions(int customerId) {
         return transactionRepository.findByUserId(customerId);
@@ -32,6 +34,32 @@ public class CustomerService {
     public List<Ticket> displayPurchasedTickets(int customerId) {
         return ticketRepository.findByUserId(customerId);
     }
+
+    public List<Event> displayCustomerEvent(int customerId){
+        //retrieve customer transaction with active status 
+        List<Transaction> transactions = transactionRepository.findByUserIdAndStatus(customerId, "Active");
+
+        //get all unique eventIds 
+        List<Integer> eventIds = new ArrayList<>();
+        for (Transaction transaction: transactions){
+            int currEventId = transaction.getEventId();
+            if (!eventIds.contains(currEventId)){
+                eventIds.add(currEventId);
+            }
+        }
+        //List of Events to be returned 
+        List<Event> events = new ArrayList<>();
+        for (int eventId : eventIds){
+            try {
+                Event event = eventService.getEventById(eventId);
+                events.add(event);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return events;
+    }
+
 
     public TransactionTickets processTransaction(Transaction transaction) {
         // EventIDretrieve for event details

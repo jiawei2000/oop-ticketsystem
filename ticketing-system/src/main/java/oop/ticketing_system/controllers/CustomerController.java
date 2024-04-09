@@ -30,16 +30,24 @@ public class CustomerController {
     @GetMapping("/transactionHistory/{customerId}")
     public ResponseEntity<List<Transaction>> displayUserTransactions(@PathVariable int customerId) {
         List<Transaction> transactions = customerService.displayTransactions(customerId);
-
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
     //display purchased ticket
     @GetMapping("/purchasedTickets/{customerId}")
-    public List<Ticket> displayPurchasedTickets(@PathVariable int customerId) {
-        return customerService.displayPurchasedTickets(customerId);
+    public ResponseEntity<List<Ticket>> displayPurchasedTickets(@PathVariable int customerId) {
+        List<Ticket> tickets = customerService.displayPurchasedTickets(customerId);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
+    //get customer Events 
+    @GetMapping("/customerEvents/{customerId}")
+    public ResponseEntity<List<Event>> displayCustomerEvents(@PathVariable int customerId){
+        List<Event> events = customerService.displayCustomerEvent(customerId);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    //create Transactions 
     @PostMapping("/transaction")
     public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
 
