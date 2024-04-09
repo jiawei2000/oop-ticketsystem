@@ -16,6 +16,8 @@ const form = reactive({
 
 const isPasswordVisible = ref(false)
 const isLoading = ref(false);
+const showError = ref(false);
+const errorMessage = ref('');
 const refForm = ref();
 const ability = useAppAbility()
 
@@ -23,6 +25,7 @@ const register = async () => {
     const registerCustomerURL = "users/createCustomer";
 
     isLoading.value = true;
+    showError.value = false;
     const valid = await refForm.value.validate()
     if (valid.valid == false) {
         isLoading.value = false;
@@ -35,7 +38,7 @@ const register = async () => {
         email: form.email,
     }
 
-    console.log("Regisetering user with data: ", data);
+    console.log("Registering user with data: ", data);
 
     axios.post(registerCustomerURL, data)
         .then(response => {
@@ -57,6 +60,13 @@ const register = async () => {
         })
         .catch(error => {
             console.log(error.message);
+            showError.value = true;
+            if (error.response) {
+                console.log("Error: ", error.response.data);
+                errorMessage.value = error.response.data;
+            } else {
+                errorMessage.value = error.message;
+            }
         });
     isLoading.value = false;
 }
@@ -111,6 +121,10 @@ const register = async () => {
                                     :append-inner-icon="isPasswordVisible ? 'bx-hide' : 'bx-show'"
                                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                                     :rules="[requiredValidator, lengthValidator(form.password, 8)]" />
+
+                                <VAlert v-if="showError" variant="tonal" color="error" class="text-center mt-2">
+                                    {{ errorMessage }}
+                                </VAlert>
 
                                 <VBtn class="mt-4" block type="submit" @click="register()">
                                     <span v-if="!isLoading">Sign Up</span>

@@ -16,12 +16,15 @@ const form = reactive({
 const isPasswordVisible = ref(false)
 const refForm = ref();
 const isLoading = ref(false);
+const showError = ref(false);
+const errorMessage = ref('');
 const ability = useAppAbility()
 
 const login = async () => {
     const loginCustomerURL = "users/loginCustomer";
 
     isLoading.value = true;
+    showError.value = false;
     const valid = await refForm.value.validate()
     if (valid.valid == false) {
         isLoading.value = false;
@@ -55,8 +58,12 @@ const login = async () => {
         })
         .catch(error => {
             console.log(error.message);
-            if (error.response.data) {
+            showError.value = true;
+            if (error.response) {
                 console.log("Error: ", error.response.data);
+                errorMessage.value = error.response.data;
+            } else {
+                errorMessage.value = error.message;
             }
         });
     isLoading.value = false;
@@ -93,7 +100,6 @@ const login = async () => {
                         Customer Portal
                     </h6>
                 </VCardText>
-
                 <VCardText>
                     <VForm @submit.prevent ref="refForm">
                         <VRow>
@@ -110,6 +116,9 @@ const login = async () => {
                                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                                     :rules="[requiredValidator]" />
 
+                                <VAlert v-if="showError" variant="tonal" color="error" class="text-center mt-2">
+                                    {{ errorMessage }}
+                                </VAlert>
                                 <!-- login button -->
                                 <VBtn class="mt-4" block type="submit" @click="login()">
                                     Login
