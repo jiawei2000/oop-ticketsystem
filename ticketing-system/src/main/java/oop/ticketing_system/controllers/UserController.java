@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import oop.ticketing_system.models.*;
+
 import java.util.Map;
 
 @RestController
@@ -30,7 +31,7 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }        
+        }
     }
 
     @PostMapping("/createCustomer")
@@ -41,7 +42,7 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }        
+        }
     }
 
     @PostMapping("/createTicketOfficer")
@@ -51,40 +52,41 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }        
+        }
     }
 
     @PostMapping("/loginCustomer")
-    public ResponseEntity<String> loginCustomer(@RequestBody Map<String, String> credentials){
+    public ResponseEntity<?> loginCustomer(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("userName");
         String password = credentials.get("password");
-        if(userService.authenticateCustomer(username, password)){
-            return new ResponseEntity<>("Login successful", HttpStatus.OK);
+        Customer response = userService.authenticateCustomer(username, password);
+        if (response != null) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/loginManager")
-    public ResponseEntity<String> loginManager(@RequestBody Map<String, String> credentials){
+    public ResponseEntity<String> loginManager(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("userName");
         String password = credentials.get("password");
-        if(userService.authenticateManager(username, password)){
+        if (userService.authenticateManager(username, password)) {
             return new ResponseEntity<>("Login successful", HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/loginTicketOfficer")
-    public ResponseEntity<String> loginTicketOfficer(@RequestBody Map<String, String> credentials){
+    public ResponseEntity<String> loginTicketOfficer(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("userName");
         String password = credentials.get("password");
-        if(userService.authenticateTicketOfficer(username, password)){
+        if (userService.authenticateTicketOfficer(username, password)) {
             return new ResponseEntity<>("Login successful", HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
     }
 }
 

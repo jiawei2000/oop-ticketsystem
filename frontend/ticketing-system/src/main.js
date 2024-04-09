@@ -10,6 +10,9 @@ import '@styles/styles.scss'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
+import ability from '@/plugins/casl/ability'
+import { abilitiesPlugin } from '@casl/vue'
+
 loadFonts()
 
 
@@ -22,6 +25,9 @@ app.use(vuetify)
 app.use(createPinia())
 app.use(router)
 app.use(layoutsPlugin)
+app.use(abilitiesPlugin, ability, {
+    useGlobalProperties: true,
+})
 
 // Mount vue app
 app.mount('#app')
