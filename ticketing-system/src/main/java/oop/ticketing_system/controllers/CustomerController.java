@@ -33,6 +33,17 @@ public class CustomerController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
+    @GetMapping("/transactionDetailsHistory/{customerId}")
+    public ResponseEntity<?> displayUserTransactionTickets(@PathVariable int customerId) {
+        try {
+            List<TransactionTickets> response = customerService.displayTransactionTickets(customerId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     //display purchased ticket
     @GetMapping("/purchasedTickets/{customerId}")
     public ResponseEntity<List<Ticket>> displayPurchasedTickets(@PathVariable int customerId) {
@@ -42,7 +53,7 @@ public class CustomerController {
 
     //get customer Events 
     @GetMapping("/customerEvents/{customerId}")
-    public ResponseEntity<List<Event>> displayCustomerEvents(@PathVariable int customerId){
+    public ResponseEntity<List<Event>> displayCustomerEvents(@PathVariable int customerId) {
         List<Event> events = customerService.displayCustomerEvent(customerId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }

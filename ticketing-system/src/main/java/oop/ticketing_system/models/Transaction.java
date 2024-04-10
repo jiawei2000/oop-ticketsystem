@@ -12,16 +12,18 @@ public class Transaction {
     private int userId;
     private int numTicketPurchased;
     private String status = "Active";
+    private String date;
 
     public Transaction() {
     }
 
-    public Transaction(int transactionId, int eventId, int userId, int numTicketPurchased, String status) {
+    public Transaction(int transactionId, int eventId, int userId, int numTicketPurchased, String status, String date) {
         this.transactionId = transactionId;
         this.eventId = eventId;
         this.userId = userId;
         this.numTicketPurchased = numTicketPurchased;
         this.status = status;
+        this.date = date;
     }
 
     // getters
@@ -45,6 +47,10 @@ public class Transaction {
         return this.status;
     }
 
+    public String getDate() {
+        return this.date;
+    }
+
     public String toString() {
         return String.format("TransactionId: %d, EventId: %d, UserId: %d, NumTicketPurchased: %d, Status: %s", transactionId, eventId, userId, numTicketPurchased, status);
     }
@@ -52,5 +58,9 @@ public class Transaction {
     // setters
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

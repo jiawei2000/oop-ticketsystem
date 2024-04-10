@@ -2,10 +2,8 @@ package oop.ticketing_system.services;
 
 import oop.ticketing_system.models.*;
 import oop.ticketing_system.repository.*;
-// import oop.ticketing_system.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-// import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.*;
 
@@ -33,12 +31,32 @@ public class CustomerService {
         return transactionRepository.findByUserId(customerId);
     }
 
+    public List<TransactionTickets> displayTransactionTickets(int customerId) {
+        List<TransactionTickets> transactionTicketsList = new ArrayList<>();
+        List<Transaction> transactionList = displayTransactions(customerId);
+
+        for (Transaction transaction : transactionList) {
+            TransactionTickets transactionTickets = new TransactionTickets(transaction);
+            Event event = eventService.getEventById(transaction.getEventId());
+            transactionTickets.setEventName(event.getEventName());
+
+            List<Ticket> ticketList = ticketRepository.findByTransactionId(transaction.getTransactionId());
+            transactionTickets.setTickets(ticketList);
+
+            transactionTickets.setAmountSpent(event.getPrice() * transaction.getNumTicketPurchased());
+
+            transactionTicketsList.add(transactionTickets);
+        }
+
+        return transactionTicketsList;
+    }
+
     public List<Ticket> displayPurchasedTickets(int customerId) {
         return ticketRepository.findByUserId(customerId);
     }
 
     public List<Event> displayCustomerEvent(int customerId) {
-        // retrieve customer transaction with active status
+        //retrieve customer transaction with active status 
         List<Transaction> transactions = transactionRepository.findByUserIdAndStatus(customerId, "Active");
 
         // get all unique eventIds
@@ -63,7 +81,7 @@ public class CustomerService {
     }
 
     public TransactionTickets processTransaction(Transaction transaction) {
-        // EventIDretrieve for event details
+        // EventID retrieve for event details
         // Customer ID //retrieve balance
         // should also check for existing purchased tickets
         int qtyPurchased = transaction.getNumTicketPurchased();
@@ -80,8 +98,7 @@ public class CustomerService {
         String eventTime = event.getTime();
         boolean temp = isBookingValid(eventDate, eventTime, LocalDateTime.now());
         if (!temp) {
-            throw new IllegalArgumentException(
-                    "Purchase must be made within 6 months in advance and at least 24 hours before the booking time.");
+            throw new IllegalArgumentException("Purchase must be made within 6 months in advance and at least 24 hours before the booking time.");
         }
 
         // check2 for qty limit
@@ -98,15 +115,13 @@ public class CustomerService {
         }
         // check3 check for existing active transaction
         if (qtyPurchased > 5 - ticketCount) {
-            throw new IllegalArgumentException(
-                    "Purchase limit is 5. you currently have " + ticketCount + " active tickets");
+            throw new IllegalArgumentException("Purchase limit is 5. you currently have " + ticketCount + " active tickets");
         }
 
         // check4 for sufficent balance
         double totalCost = qtyPurchased * event.getPrice();
         if (totalCost > customer.getBalance()) {
-            throw new IllegalArgumentException(
-                    "Insufficient Account Balance. Total Cost of the transaction is $" + totalCost);
+            throw new IllegalArgumentException("Insufficient Account Balance. Total Cost of the transaction is $" + totalCost);
         }
 
         // once all conditions are met, ticket creation
@@ -124,10 +139,8 @@ public class CustomerService {
         List<Ticket> tickets = transactionTickets.getTickets(); // ticketId, eventname, date, time, status
         for (int i = 0; i < tickets.size(); i++) {
             Ticket currTicket = tickets.get(i);
-            String tempStr = String.format("Ticket %d: [TicketId: %d, EventName: %s, Date: %s, Time: %s, Status: %s]%n",
-                    i + 1, currTicket.getTicketId(), event.getEventName(), formatDate(event.getDate()), event.getTime(),
-                    currTicket.getStatus());
-            body += tempStr;    
+            String tempStr = String.format("Ticket %d: [TicketId: %d, EventName: %s, Date: %s, Time: %s, Status: %s]%n", i + 1, currTicket.getTicketId(), event.getEventName(), formatDate(event.getDate()), event.getTime(), currTicket.getStatus());
+            body += tempStr;
         }
 
         emailService.sendEmail(email, body);
@@ -146,8 +159,7 @@ public class CustomerService {
 
         boolean temp = isCancellationValid(event.getDate(), event.getTime(), LocalDateTime.now());
         if (!temp) {
-            throw new IllegalArgumentException(
-                    "Cancellation Error: cancellation must be made 48 hours before Event start time");
+            throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time");
         }
 
         // update bank balance
@@ -177,8 +189,7 @@ public class CustomerService {
 
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate the maximum booking time (6 months in advance)
         LocalDateTime maxBookingTime = eventStartTime.minusMonths(6);
@@ -193,8 +204,7 @@ public class CustomerService {
     public boolean isCancellationValid(String eventDate, String eventTime, LocalDateTime cancelTime) {
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate minmium cancel time
         LocalDateTime minCancelTime = eventStartTime.minusHours(48);
