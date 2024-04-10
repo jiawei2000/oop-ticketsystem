@@ -20,52 +20,47 @@
                 </tr>
             </thead>
 
-            <!-- <tbody>
-                <tr v-for="event in events" :key="event.eventId">
-                    <td>{{ event.eventId }}</td>
-                    <td>${{ event.totalRevenue }}</td>
-                    <td>${{ event.saleRevenue }}</td>
-                    <td>${{ event.refundRevenue }}</td>
-                    <td>{{ event.sales }}</td>
-                    <td>{{ event.attendance }}</td>
-                    <td>{{ event.noRefunds }}</td>
-                    <td>{{ event.noCancelled }}</td>
-                </tr>
-            </tbody> -->
+            <tbody>
+            <tr v-if="eventStatistics" :key="eventStatistics.eventId">
+              <td>{{ eventStatistics.eventId }}</td>
+              <td>{{ eventStatistics.eventName }}</td>
+              <td>${{ eventStatistics.totalRevenue }}</td>
+              <td>${{ eventStatistics.saleRevenue }}</td>
+              <td>${{ eventStatistics.refundRevenue }}</td>
+              <td>{{ eventStatistics.sales }}</td>
+              <td>{{ eventStatistics.attendance }}</td>
+              <td>{{ eventStatistics.noRefunds }}</td>
+              <td>{{ eventStatistics.noCancelled }}</td>
+            </tr>
+          </tbody>
         </VTable>
     </VCardText>
 </VCard>
     </section>
 </template>
 
-<!-- <script setup>
-import axios from "@axios";
-import { onMounted, ref } from "vue";
-
-const searchQuery = ref("");
-const eventStatistics = ref([]);
-const headers = [
-    { text: 'Event ID', value: 'eventId' },
-    { text: 'Total Revenue', value: 'totalRevenue' },
-    { text: 'Sale Revenue', value: 'saleRevenue' },
-    { text: 'Refund Revenue', value: 'refundRevenue' },
-    { text: 'Sales', value: 'sales' },
-    { text: 'Attendance', value: 'attendance' },
-    { text: 'No Refunds', value: 'noRefunds' },
-    { text: 'No Cancelled', value: 'noCancelled' },
-];
-
-const getEventStatistics = async () => {
-    const displayEventStatisticsURL = "getEventStatistics/1"; // Assuming 1 is the managerId for testing
-    try {
-        const response = await axios.get(displayEventStatisticsURL);
-        eventStatistics.value = [response.data];
-    } catch (error) {
-        console.error("Error fetching event statistics:", error.message);
-    }
+<script>
+import axios from 'axios';
+export default {
+  data() {
+    return {
+      eventStatistics: null
+    };
+  },
+  methods: {
+    async fetchEventStatistics(currEventId) {
+  try {
+    const reportURL = "http://localhost:8080/api/manager/getEventStatistics/" + currEventId;
+    const response = await axios.get(reportURL);
+    this.eventStatistics = response.data;
+  } catch (error) {
+    console.error("Error fetching event statistics:", error);
+  }
+}
+  },
+  mounted() {
+    const currEventId = 1; // Replace with the actual current event ID
+    this.fetchEventStatistics(currEventId);
+  }
 };
-
-onMounted(() => {
-    getEventStatistics();
-});
-</script> -->
+</script>
