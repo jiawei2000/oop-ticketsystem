@@ -2,6 +2,7 @@
 import axios from "@axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+import ConfirmationDialogue.vue;
 
 
 const router = useRouter();
@@ -52,14 +53,7 @@ const openModal = () => {
 const closeModal = () => {
     modalOpen.value = false;
 }
-//for cancelConfirm modal
-const cancelConfirmModalOpen = ref(false);
-const cancelConfirmOpenModal = () => {
-    cancelConfirmModalOpen.value = true;
-}
-const cancelConfirmCloseModal = () => {
-    cancelConfirmModalOpen.value = false;
-}
+
 
 //for cancelMessage modal
 const cancelModalOpen = ref(false);
@@ -100,6 +94,8 @@ const cancelMessage = ref('');
 const isSuccessful = ref(true);
 const cancelEvent = async (currEventId) => {
 
+    if (await this.$refs.confirm.open())
+    {
     const cancelURL = "manager/cancelEvent/" + currEventId;
     await axios.put(cancelURL)
             .then(async response => {
@@ -116,6 +112,7 @@ const cancelEvent = async (currEventId) => {
                 isSuccessful.value = false;
                 cancelOpenModal();
             });
+    }
 }
 
 const getReport = async (currEventId) => {
@@ -226,29 +223,10 @@ const getReport = async (currEventId) => {
                 </v-card-text>
                 <v-card-actions class="justify-end">
                     <v-btn @click="closeModal">Close</v-btn>
-                    <v-btn color="primary" @click="editEvent"><v-icon>mdi-file-edit</v-icon>Edit Event</v-btn>
-                    <v-btn color="red" @click="cancelConfirmModalOpen"><v-icon>mdi-close-octagon</v-icon>Cancel Event</v-btn>
-                    <v-btn color="green" @click="getReport"><v-icon>mdi-file-chart</v-icon>Generate Report</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-
-<!-- Cancellation confirmation modal -->
-        <v-dialog v-model="cancelConfirmModalOpen" max-width="500">
-            <v-card>
-                <v-card-title>
-                    <span class="headline">Cancellation Confirmation</span>
-                </v-card-title>
-                <v-card-text class="text-center">
-                    <v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>"Warning: Are you sure you want to cancel this event? This action cannot be undone!"
-                </v-card-text>
-                <v-card-actions class="justify-center">
-                    <v-btn color="red" @click="cancelEvent(event.eventId)">Confirm</v-btn>
-                    <v-btn color="primary" @click="cancelConfirmCloseModal">Close</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-
+        <ConfirmationDialogue ref="confirm"/>
 <!-- Cancellation message modal -->
         <v-dialog v-model="cancelModalOpen" max-width="500">
             <v-card>
@@ -298,9 +276,8 @@ const getReport = async (currEventId) => {
                             <td>${{ event.cancellationFee }}</td>
                             <td>
                                 <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
-                                <v-btn color="primary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
-                                <v-btn color="red" variant="outlined" @click="cancelConfirmModalOpen">Cancel Event</v-btn>
-                                <v-btn color="green" variant="outlined" @click="getReport">Generate Report</v-btn>
+                                <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
+                                <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn>
                             </td>
                         </tr>
                     </tbody>
