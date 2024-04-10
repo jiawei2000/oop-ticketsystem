@@ -35,8 +35,8 @@ const submitForm = async () => {
         .then(async response => {
             console.log(response.data);
             const data = response.data
-            if (data.status === "Used") {
-                message.value = "Ticket is already used";
+            if (data.status !== "Active") {
+                message.value = "Ticket status is not 'Active'.";
                 isSuccessful.value = false;
                 OpenModal();
             }
@@ -51,7 +51,7 @@ const submitForm = async () => {
                 const foundTicket = tickets.value.find(ticket => ticket.ticketId === data.ticketId);
                 if (foundTicket) {
                     console.log(foundTicket);
-                    message.value = "Ticket exists in table below";
+                    message.value = "Ticket exists in table below.";
                     isSuccessful.value = false;
                     OpenModal();
                 }
