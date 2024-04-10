@@ -2,8 +2,6 @@
 import axios from "@axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-// import ConfirmationDialogue.vue;
-import ConfirmationDialogue from './ConfirmationDialogue.vue';
 
 
 const router = useRouter();
@@ -50,11 +48,27 @@ const modalOpen = ref(false);
 const openModal = () => {
     modalOpen.value = true;
 }
-
 const closeModal = () => {
     modalOpen.value = false;
 }
 
+//for cancelConfirm modal
+const cancelConfirmModalOpen = ref(false);
+const openCancel = () => {
+    cancelConfirmModalOpen.value = true;
+    return new Promise((resolve, reject) => {
+        cancelConfirmModalOpen.resolve = resolve;
+        cancelConfirmModalOpen.reject = reject;
+    });
+}
+const confirm = () => {
+    cancelConfirmModalOpen.resolve(true);
+    cancelConfirmModalOpen.value = false;
+}
+const closeCancel = () => {
+    cancelConfirmModalOpen.resolve(false);
+    cancelConfirmModalOpen.value = false;
+}
 
 //for cancelMessage modal
 const cancelModalOpen = ref(false);
@@ -94,8 +108,7 @@ const editEvent = (currEventId) => {
 const cancelMessage = ref('');
 const isSuccessful = ref(true);
 const cancelEvent = async (currEventId) => {
-
-    if (await this.$refs.confirm.open())
+    if (await openCancel())
     {
     const cancelURL = "manager/cancelEvent/" + currEventId;
     await axios.put(cancelURL)
@@ -108,7 +121,7 @@ const cancelEvent = async (currEventId) => {
             })
             .catch(error => {
                 console.log(error.response.data);
-                cancelMessage.value = "error.response.data";
+                cancelMessage.value = error.response.data;
                 closeModal();
                 isSuccessful.value = false;
                 cancelOpenModal();
@@ -212,13 +225,6 @@ const getReport = async (currEventId) => {
                                     <v-text-field v-model="formData.stock" label="Stock" readonly></v-text-field>
                                 </v-col>
                             </v-row>
-                            <!-- Quantity -->
-                            <v-row>
-                                <v-col cols="12">
-                                    <v-text-field v-model="formData.quantity" label="Specify Quantity" type=number min=0
-                                        max=5 :rules="[validateQuantity]"></v-text-field>
-                                </v-col>
-                            </v-row>
                         </v-container>
                     </v-form>
                 </v-card-text>
@@ -227,7 +233,24 @@ const getReport = async (currEventId) => {
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <ConfirmationDialogue ref="confirm"/>
+
+<!-- Cancellation confirmation modal -->
+        <v-dialog v-model="cancelConfirmModalOpen" max-width="500" @keydown.esc="closeCancel">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Cancellation Confirmation</span>
+                </v-card-title>
+                <v-card-text class="text-center">
+                    <v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>
+                    Warning: Are you sure you want to cancel this event? This action cannot be undone!
+                </v-card-text>
+                <v-card-actions class="justify-center">
+                    <v-btn color="error" @click="confirm">Confirm</v-btn>
+                    <v-btn color="primary" @click="closeCancel">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
 <!-- Cancellation message modal -->
         <v-dialog v-model="cancelModalOpen" max-width="500">
             <v-card>
@@ -287,3 +310,4 @@ const getReport = async (currEventId) => {
         </VCard>
     </section>
 </template>
+
