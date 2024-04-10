@@ -3,6 +3,7 @@ import axios from "@axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
+
 const router = useRouter();
 const searchQuery = ref("");
 const events = ref([]);
@@ -92,7 +93,7 @@ const viewDetails = (currEventId) => {
 
 const editEvent = (currEventId) => {
  // router.push({ path: 'EditEventDetails/' + currEventId });
-
+ // WIP, eventually it should redirect to the editing page
 
 }
 const cancelMessage = ref('');
@@ -114,6 +115,54 @@ const cancelEvent = async (currEventId) => {
                 closeModal();
                 isSuccessful.value = false;
                 cancelOpenModal();
+            });
+}
+
+const getReport = async (currEventId) => {
+    const reportURL = "manager/getEventStatistics/" + currEventId;
+    await axios.get(reportURL)
+            .then(async response => {
+                console.log(response.data);
+                const fs = require("fs");
+                const { stringify } = require("csv-stringify");
+                const filename = response.data.event.eventName + "_event_report.csv";
+                const writableStream = fs.createWriteStream(filename);
+
+                const columns = [
+                  "event_ID",
+                  "manager_ID",
+                  "event_name",
+                  "venue",
+                  "date",
+                  "total_revenue",
+                  "sale_revenue",
+                  "refund_revenue",
+                  "sales",
+                  "attendance",
+                  "number_of_refunds",
+                  "number_of_cancelled",
+                ];
+
+                const stringifier = stringify({ header: true, columns: columns });
+                stringifier.write(response.data.event.eventId);
+                stringifier.write(response.data.event.managerId);
+                stringifier.write(response.data.event.eventName);
+                stringifier.write(response.data.event.venue);
+                stringifier.write(response.data.event.date);
+                stringifier.write(response.data.totalRevenue);
+                stringifier.write(response.data.saleRevenue);
+                stringifier.write(response.data.refundRevenue);
+                stringifier.write(response.data.sales);
+                stringifier.write(response.data.attendance);
+                stringifier.write(response.data.noRefunds);
+                stringifier.write(response.data.noCancelled);
+                stringifier.pipe(writableStream);
+                console.log("Report Generated Successfully");
+                closeModal();
+            })
+            .catch(error => {
+                console.log(error.response.data);
+                closeModal();
             });
 }
 </script>
@@ -179,6 +228,7 @@ const cancelEvent = async (currEventId) => {
                     <v-btn @click="closeModal">Close</v-btn>
                     <v-btn color="primary" @click="editEvent"><v-icon>mdi-file-edit</v-icon>Edit Event</v-btn>
                     <v-btn color="red" @click="cancelConfirmModalOpen"><v-icon>mdi-close-octagon</v-icon>Cancel Event</v-btn>
+                    <v-btn color="green" @click="getReport"><v-icon>mdi-file-chart</v-icon>Generate Report</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -250,6 +300,7 @@ const cancelEvent = async (currEventId) => {
                                 <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
                                 <v-btn color="primary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
                                 <v-btn color="red" variant="outlined" @click="cancelConfirmModalOpen">Cancel Event</v-btn>
+                                <v-btn color="green" variant="outlined" @click="getReport">Generate Report</v-btn>
                             </td>
                         </tr>
                     </tbody>
