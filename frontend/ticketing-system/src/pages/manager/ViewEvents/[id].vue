@@ -1,6 +1,6 @@
 <template>
     <section>
-      <!-- Event statistics table -->
+      <!-- Event Report Page -->
       <VCard v-if="eventStatistics">
         <VCardText>
           <VDivider />
