@@ -9,7 +9,7 @@ const events = ref([]);
 const managerId = 1; // This is hardcoded for testing purposes, it will need to be changed dynamically
 //Event script
 const getEvents = async () => {
-    const displayEventURL = "manager/getEvents/{managerId}"
+    const displayEventURL = "events"
     axios.get(displayEventURL)
         .then(response => {
             const data = response.data
