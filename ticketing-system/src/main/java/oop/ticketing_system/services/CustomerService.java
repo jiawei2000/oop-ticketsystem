@@ -134,7 +134,6 @@ public class CustomerService {
 
         // send email
         String email = customer.getEmail();
-        // String email = "hongwei.gan.2022@scis.smu.edu.sg ";
         String body = "";
         List<Ticket> tickets = transactionTickets.getTickets(); // ticketId, eventname, date, time, status
         for (int i = 0; i < tickets.size(); i++) {

@@ -5,6 +5,17 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const tickets = ref([]);
+const tableVisible = ref(false);
+
+const isVisible = () => {
+    if(tickets.value.length === 0){
+        tableVisible.value = false;
+    }
+    else{
+        tableVisible.value = true;
+    }
+}
+
 
 //successful message 
 const isSuccessful = ref(false);
@@ -43,8 +54,8 @@ const submitForm = async () => {
             else {
                 let ticket = {
                     "ticketId": data.ticketId,
-                    "eventId": data.eventId,
-                    "userId": data.userId,
+                    "eventname": data.eventname,
+                    "username": data.username,
                     "type": data.type,
                     "status": data.status
                 };
@@ -57,6 +68,7 @@ const submitForm = async () => {
                 }
                 else {
                     tickets.value.push(ticket);
+                    isVisible();
                 }
             }
         })
@@ -69,20 +81,6 @@ const submitForm = async () => {
 
 };
 
-// const findEventName = async (eventId) => {
-//     // console.log("A"+eventId)
-//     const getEventURL = "/events/" + eventId;
-//     await axios.get(getEventURL)
-//         .then(async response => {
-//             console.log("event");
-//             console.log(response.data);
-//             const data = response.data
-//             tableData.eventname = data.eventName;
-//         })
-//         .catch(error => {
-//             console.log(error.response.data);
-//         });
-// }
 
 const changeTicketStatus = async (ticketId) => {
     console.log(ticketId);
@@ -96,7 +94,7 @@ const changeTicketStatus = async (ticketId) => {
             if (index >= 0) {
                 tickets.value.splice(index, 1);
             }
-
+            isVisible();
             //open successful message 
             message.value = "Ticket successfully verified!"
             isSuccessful.value = true;
@@ -144,7 +142,7 @@ const changeTicketStatus = async (ticketId) => {
         </v-dialog>
 
         <!-- Ticket table -->
-        <VCard class="mt-5">
+        <VCard class="mt-5" v-if = tableVisible>
             <VCardText>
                 <VDivider />
 
@@ -164,8 +162,8 @@ const changeTicketStatus = async (ticketId) => {
                     <tbody>
                         <tr v-for="ticket in tickets" :key="ticket.ticketId">
                             <td>{{ ticket.ticketId }}</td>
-                            <td>{{ ticket.eventId }}</td>
-                            <td>{{ ticket.userId }}</td>
+                            <td>{{ ticket.eventname }}</td>
+                            <td>{{ ticket.username }}</td>
                             <td>{{ ticket.type }}</td>
                             <td>{{ ticket.status }}</td>
                             <td>

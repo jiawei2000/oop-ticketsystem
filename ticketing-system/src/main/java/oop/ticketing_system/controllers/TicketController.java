@@ -36,7 +36,7 @@ public class TicketController {
         String serial = (String) body.get("serial");
         int eventId = (Integer) body.get("eventId");
         try {
-            Ticket response = ticketService.verifyTicketSerial(serial, eventId);
+            Map<String, Object> response = ticketService.verifyTicketSerial(serial, eventId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

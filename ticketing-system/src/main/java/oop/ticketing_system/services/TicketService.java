@@ -5,12 +5,18 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import oop.ticketing_system.models.Ticket;
+import oop.ticketing_system.models.Customer;
+import oop.ticketing_system.models.Event;
 import oop.ticketing_system.repository.TicketRepository;
+import oop.ticketing_system.repository.CustomerRepository;
+import oop.ticketing_system.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +27,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+
 
     public List<Ticket> updateTicketStatusByEventId(int eventId, String newStatus) {
         List<Ticket> tickets = ticketRepository.findByEventIdAndStatus(eventId, "Active");
@@ -51,7 +62,7 @@ public class TicketService {
         return generateQRCodeImage(serial);
     }
 
-    public Ticket verifyTicketSerial(String serial, int eventId) {
+    public Map<String, Object> verifyTicketSerial(String serial, int eventId) {
         int ticketId = decryptTicketId(serial);
         Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
         Ticket ticket = optionalTicket.orElse(null);
@@ -61,7 +72,19 @@ public class TicketService {
         if (ticket.getEventId() != eventId){
             throw new IllegalArgumentException("Invalid Ticket: Ticket does not match eventId");
         }
-        return ticket;
+
+        Map<String, Object> retMap = new HashMap<>();
+        Event event = eventRepository.getReferenceById(ticket.getEventId());
+        Customer customer = customerRepository.getReferenceById(ticket.getUserId());
+        //ticketId, eventName, Username, type, & status 
+        retMap.put("ticketId", ticket.getTicketId());
+        retMap.put("eventname", event.getEventName());
+        retMap.put("username", customer.getUserName());
+        retMap.put("type", ticket.getType());
+        retMap.put("status", ticket.getStatus());
+
+
+        return retMap;
     }
 
     public BufferedImage generateQRCodeImage(String barcodeText) {
