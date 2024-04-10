@@ -88,7 +88,8 @@ const makePurchase = async () => {
     let send_transaction_data = {
         "eventId": formData.eventId,
         "userId": localStorage.getItem("UserId"),
-        "numTicketPurchased": parseInt(formData.quantity)
+        "numTicketPurchased": parseInt(formData.quantity),
+        "date": getCurrentDate()
     };
 
     const createTransactionURL = "customer/transaction";
@@ -118,6 +119,21 @@ const validateQuantity = (value) => {
         return 'Quantity must be within purchase limits of 1 to 5'; // Error message for invalid input
     }
 }
+
+const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    if (month < 10) {
+        month = '0' + month;
+    }
+    if (day < 10) {
+        day = '0' + day;
+    }
+    return `${year}-${month}-${day}`;
+}
+
 </script>
 
 <template>

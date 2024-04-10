@@ -2,10 +2,8 @@ package oop.ticketing_system.services;
 
 import oop.ticketing_system.models.*;
 import oop.ticketing_system.repository.*;
-import oop.ticketing_system.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.*;
 
@@ -26,30 +24,52 @@ public class CustomerService {
     private TransactionService transactionService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private EmailService emailService;
 
     public List<Transaction> displayTransactions(int customerId) {
         return transactionRepository.findByUserId(customerId);
+    }
+
+    public List<TransactionTickets> displayTransactionTickets(int customerId) {
+        List<TransactionTickets> transactionTicketsList = new ArrayList<>();
+        List<Transaction> transactionList = displayTransactions(customerId);
+
+        for (Transaction transaction : transactionList) {
+            TransactionTickets transactionTickets = new TransactionTickets(transaction);
+            Event event = eventService.getEventById(transaction.getEventId());
+            transactionTickets.setEventName(event.getEventName());
+
+            List<Ticket> ticketList = ticketRepository.findByTransactionId(transaction.getTransactionId());
+            transactionTickets.setTickets(ticketList);
+
+            transactionTickets.setAmountSpent(event.getPrice() * transaction.getNumTicketPurchased());
+
+            transactionTicketsList.add(transactionTickets);
+        }
+
+        return transactionTicketsList;
     }
 
     public List<Ticket> displayPurchasedTickets(int customerId) {
         return ticketRepository.findByUserId(customerId);
     }
 
-    public List<Event> displayCustomerEvent(int customerId){
+    public List<Event> displayCustomerEvent(int customerId) {
         //retrieve customer transaction with active status 
         List<Transaction> transactions = transactionRepository.findByUserIdAndStatus(customerId, "Active");
 
-        //get all unique eventIds 
+        // get all unique eventIds
         List<Integer> eventIds = new ArrayList<>();
-        for (Transaction transaction: transactions){
+        for (Transaction transaction : transactions) {
             int currEventId = transaction.getEventId();
-            if (!eventIds.contains(currEventId)){
+            if (!eventIds.contains(currEventId)) {
                 eventIds.add(currEventId);
             }
         }
-        //List of Events to be returned 
+        // List of Events to be returned
         List<Event> events = new ArrayList<>();
-        for (int eventId : eventIds){
+        for (int eventId : eventIds) {
             try {
                 Event event = eventService.getEventById(eventId);
                 events.add(event);
@@ -60,9 +80,8 @@ public class CustomerService {
         return events;
     }
 
-
     public TransactionTickets processTransaction(Transaction transaction) {
-        // EventIDretrieve for event details
+        // EventID retrieve for event details
         // Customer ID //retrieve balance
         // should also check for existing purchased tickets
         int qtyPurchased = transaction.getNumTicketPurchased();
@@ -73,7 +92,8 @@ public class CustomerService {
 
         Customer customer = customerRepository.getReferenceById(customerId);
 
-        // check1 for booking must be witin 6months in advance and 24hrs before booking time
+        // check1 for booking must be witin 6months in advance and 24hrs before booking
+        // time
         String eventDate = event.getDate();
         String eventTime = event.getTime();
         boolean temp = isBookingValid(eventDate, eventTime, LocalDateTime.now());
@@ -82,7 +102,7 @@ public class CustomerService {
         }
 
         // check2 for qty limit
-        if (qtyPurchased > 5 || qtyPurchased<=0) {
+        if (qtyPurchased > 5 || qtyPurchased <= 0) {
             throw new IllegalArgumentException("The purchase quantity exceeds 5 or is equal to or less than 0.");
         }
 
@@ -95,8 +115,7 @@ public class CustomerService {
         }
         // check3 check for existing active transaction
         if (qtyPurchased > 5 - ticketCount) {
-            throw new IllegalArgumentException(
-                    "Purchase limit is 5. you currently have " + ticketCount + " active tickets");
+            throw new IllegalArgumentException("Purchase limit is 5. you currently have " + ticketCount + " active tickets");
         }
 
         // check4 for sufficent balance
@@ -113,6 +132,18 @@ public class CustomerService {
         customer.setBalance(customer.getBalance() - totalCost);
         customerRepository.save(customer);
 
+        // send email
+        String email = customer.getEmail();
+        // String email = "hongwei.gan.2022@scis.smu.edu.sg ";
+        String body = "";
+        List<Ticket> tickets = transactionTickets.getTickets(); // ticketId, eventname, date, time, status
+        for (int i = 0; i < tickets.size(); i++) {
+            Ticket currTicket = tickets.get(i);
+            String tempStr = String.format("Ticket %d: [TicketId: %d, EventName: %s, Date: %s, Time: %s, Status: %s]%n", i + 1, currTicket.getTicketId(), event.getEventName(), formatDate(event.getDate()), event.getTime(), currTicket.getStatus());
+            body += tempStr;
+        }
+
+        emailService.sendEmail(email, body);
         // Return Transaction
         return transactionTickets;
     }
@@ -128,8 +159,7 @@ public class CustomerService {
 
         boolean temp = isCancellationValid(event.getDate(), event.getTime(), LocalDateTime.now());
         if (!temp) {
-            throw new IllegalArgumentException(
-                    "Cancellation Error: cancellation must be made 48 hours before Event start time");
+            throw new IllegalArgumentException("Cancellation Error: cancellation must be made 48 hours before Event start time");
         }
 
         // update bank balance
@@ -159,8 +189,7 @@ public class CustomerService {
 
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate the maximum booking time (6 months in advance)
         LocalDateTime maxBookingTime = eventStartTime.minusMonths(6);
@@ -175,12 +204,26 @@ public class CustomerService {
     public boolean isCancellationValid(String eventDate, String eventTime, LocalDateTime cancelTime) {
         String[] tempDate = eventDate.split("-");
         String[] tempTime = eventTime.split(":");
-        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]),
-                Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
+        LocalDateTime eventStartTime = LocalDateTime.of(Integer.parseInt(tempDate[0]), Integer.parseInt(tempDate[1]), Integer.parseInt(tempDate[2]), Integer.parseInt(tempTime[0]), Integer.parseInt(tempTime[1]));
 
         // Calculate minmium cancel time
         LocalDateTime minCancelTime = eventStartTime.minusHours(48);
         // returns true is cancel time is after the min cancel time
         return !cancelTime.isAfter(minCancelTime);
+    }
+
+    // date formatter
+    public String formatDate(String date) {
+        String retStr = "";
+        String[] dateArr = date.split("-");
+        for (int i = dateArr.length - 1; i >= 0; i--) {
+            String currString = dateArr[i];
+            if (i == 0) {
+                retStr += currString;
+            } else {
+                retStr += currString + "-";
+            }
+        }
+        return retStr;
     }
 }
