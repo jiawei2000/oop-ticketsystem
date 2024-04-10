@@ -25,7 +25,6 @@ public class ManagerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @GetMapping("/getEvents/{managerId}")
     public ResponseEntity<List<Event>> getEventsByManager(@PathVariable int managerId) {
         List<Event> events = eventService.getEventsByManagerId(managerId);
@@ -53,6 +52,16 @@ public class ManagerController {
         try {
             EventReport report = eventService.getEventStatistics(eventId);
             return new ResponseEntity<>(report, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getEventStatistics")
+    public ResponseEntity<?> getAllEventStatistics() {
+        try {
+            List<EventReport> reportList = eventService.getAllEventStatistics();
+            return new ResponseEntity<>(reportList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
