@@ -2,7 +2,9 @@ package oop.ticketing_system.controllers;
 
 import oop.ticketing_system.models.Event;
 import oop.ticketing_system.models.EventReport;
+import oop.ticketing_system.models.TicketOfficer;
 import oop.ticketing_system.services.EventService;
+import oop.ticketing_system.services.TicketOfficerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ import java.util.Map;
 public class ManagerController {
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private TicketOfficerService ticketOfficerService;
 
     @PostMapping("/createEvent")
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
@@ -62,6 +67,16 @@ public class ManagerController {
         try {
             List<EventReport> reportList = eventService.getAllEventStatistics();
             return new ResponseEntity<>(reportList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getTicketOfficers/{eventId}")
+    public ResponseEntity<?> getTicketOfficersByEventId(@PathVariable int eventId) {
+        try {
+            List<TicketOfficer> response = ticketOfficerService.getTicketOfficerListByEventId(eventId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
