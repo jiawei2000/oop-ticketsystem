@@ -2,7 +2,8 @@
 import axios from "@axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import ConfirmationDialogue.vue;
+// import ConfirmationDialogue.vue;
+import ConfirmationDialogue from './ConfirmationDialogue.vue';
 
 
 const router = useRouter();
