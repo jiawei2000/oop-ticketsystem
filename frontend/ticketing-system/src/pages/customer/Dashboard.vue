@@ -42,7 +42,7 @@
                             </thead>
 
                             <tbody>
-                                <tr v-for="event in events" :key="event.eventId">
+                                <tr v-for="transaction in transactionHistory" :key="transaction.transactionId">
                                     <td>{{ event.eventName }}</td>
                                     <td>{{ event.venue }}</td>
                                     <td>{{ formatDate(event.date) }}</td>
@@ -68,18 +68,18 @@
                         <thead>
                             <tr>
                                 <th>Event</th>
-                                <th>Quantity</th>
                                 <th>Venue</th>
+                                <th>Price</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr v-for="event in events" :key="event.eventId">
+                            <tr v-for="event in customerEvents" :key="event.eventId">
                                 <td>{{ event.eventName }}</td>
                                 <td>{{ event.venue }}</td>
-                                <td>{{ formatDate(event.date) }}</td>
-                                <td>{{ event.time }}</td>
+                                <td>{{ event.price }}</td>
+                                <td>{{ event.date }}</td>
                             </tr>
                         </tbody>
                     </VTable>                                                               
@@ -88,3 +88,76 @@
         </v-row>
     </section>
 </template>
+
+<script>
+// import axios from "@axios";
+// import { onMounted } from "vue";
+// import { useRouter } from "vue-router";
+
+// const router = useRouter();
+// const searchQuery = ref("");
+// const customerTransactions = ref([]);
+// const purchasedTickets = ref([]);
+
+// const getPurchasedTickets = async () => {
+//     const purchasedTicketsURL = "/customer/purchasedTickets";
+//     axios.get(purchasedTicketsURL)
+//         .then(response => {
+//             const data = response.data;
+//             purchasedTickets.value = data;
+//         })
+//         .catch(error => {
+//             console.log(error);
+//         });
+// }
+
+// const getCustomerTransactions = async () => {
+//     const customerTransactionsURL = "/customer/transactionHistory";
+//     axios.get(customerTransactionsURL)
+//         .then(response => {
+//             const data = response.data;
+//             customerTransactions.value = data;
+//         })
+//         .catch(error => {
+//             console.log(error);
+//         });
+// }
+
+
+
+// const formatDate = (dateString) => {
+//     const [year, month, day] = dateString.split('-');
+//     return `${day}-${month}-${year}`;
+// }
+
+// onMounted(() => {
+//     const userId = localStorage.getItem("UserId");
+//     getCustomerTransactions();
+//     getPurchasedTickets();
+// });
+import axios from 'axios';
+export default {
+    data() {
+        return {
+            transactionHistory: [],
+            customerEvents: [],
+            userId: localStorage.getItem("UserId"),
+            userBalance: 0
+        };
+    },
+    methods: {
+        async fetchCustomerEvents() {
+            try {
+                const URL = `http://localhost:8080/api/customer/customerEvents/${this.userId}`;
+                const response = await axios.get(URL);
+                this.customerEvents = response.data;
+            } catch (error) {
+                console.error("Error fetching customer events:", error);
+            }
+        }
+    },
+    mounted() {
+        this.fetchCustomerEvents();
+    }
+}
+</script>
