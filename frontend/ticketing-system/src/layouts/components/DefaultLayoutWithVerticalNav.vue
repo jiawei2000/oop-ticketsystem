@@ -59,7 +59,7 @@ const globalThemeBackground = computed(() => global.current.value.colors.backgro
 
     <!-- 👉 Footer -->
     <template #footer>
-      <Footer />
+      <!-- <Footer /> -->
     </template>
 
     <!-- 👉 Customizer -->
