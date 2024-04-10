@@ -32,7 +32,7 @@
               <td>{{ transaction.tickets[0].type }}</td>
               <td>{{ transaction.transaction.status }}</td>
               <td>
-                <v-btn class="mr-2" variant="outlined" @click="viewDetails(transaction.transaction.eventId)">View Details</v-btn>
+                <v-btn class="mr-2" variant="outlined" @click="redirectToViewTicketPage(transaction.transaction.transactionId)">View Details</v-btn>
                 <v-btn v-if="transaction.transaction.status !== 'Refunded'" variant="outlined" color="red" @click="confirmRefund(transaction.transaction.transactionId)">Refund Transaction</v-btn>
               </td>
             </tr>
@@ -103,5 +103,9 @@ const proceedRefund = async () => {
     console.error("Error refunding transaction:", error.message);
     // Optional: Show error message to the user
   }
+};
+
+const redirectToViewTicketPage = (transactionId) => {
+  window.location.href = `http://localhost:5173/customer/viewticket?transactionId=${transactionId}`;
 };
 </script>
