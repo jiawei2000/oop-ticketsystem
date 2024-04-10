@@ -7,6 +7,7 @@ import oop.ticketing_system.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class EventService {
         return eventRepository.findByManagerId(userId);
     }
 
-    public List<Event> getEventsByStatus(String status){
+    public List<Event> getEventsByStatus(String status) {
         return eventRepository.findByStatus(status);
     }
 
@@ -94,6 +95,16 @@ public class EventService {
         report.setRefundRevenue(cancellationRevenue);
         report.setTotalRevenue(totalRevenue);
         return report;
+    }
+
+    public List<EventReport> getAllEventStatistics() {
+        List<Event> eventList = getEvents();
+        List<EventReport> eventReportList = new ArrayList<>();
+        for (Event event : eventList) {
+            EventReport eventReport = getEventStatistics(event.getEventId());
+            eventReportList.add(eventReport);
+        }
+        return eventReportList;
     }
 
 }
