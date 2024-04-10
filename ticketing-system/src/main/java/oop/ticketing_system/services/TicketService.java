@@ -51,12 +51,15 @@ public class TicketService {
         return generateQRCodeImage(serial);
     }
 
-    public Ticket verifyTicketSerial(String serial) {
+    public Ticket verifyTicketSerial(String serial, int eventId) {
         int ticketId = decryptTicketId(serial);
         Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
         Ticket ticket = optionalTicket.orElse(null);
         if (ticket == null) {
-            throw new IllegalArgumentException("Invalid Ticket");
+            throw new IllegalArgumentException("Invalid Ticket: Serial code does not exist");
+        }
+        if (ticket.getEventId() != eventId){
+            throw new IllegalArgumentException("Invalid Ticket: Ticket does not match eventId");
         }
         return ticket;
     }
@@ -99,5 +102,11 @@ public class TicketService {
             System.out.println("Error decrypting ticketId: " + e.getMessage());
             throw new IllegalArgumentException("Invalid Ticket");
         }
+    }
+
+    public Ticket updateTicketStatusToUsed(int ticketId){
+        Ticket ticket = ticketRepository.getReferenceById(ticketId);
+        ticket.setStatus("Used");
+        return ticketRepository.save(ticket); 
     }
 }

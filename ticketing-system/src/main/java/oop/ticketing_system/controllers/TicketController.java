@@ -34,18 +34,24 @@ public class TicketController {
     @PostMapping("/verify")
     public ResponseEntity<?> verifyTicket(@RequestBody Map<String, Object> body) {
         String serial = (String) body.get("serial");
+        int eventId = (Integer) body.get("eventId");
         try {
-            Ticket response = ticketService.verifyTicketSerial(serial);
+            Ticket response = ticketService.verifyTicketSerial(serial, eventId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-
     @Bean
     public HttpMessageConverter<BufferedImage> createImageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
+    }
+
+    @PutMapping("/updateTicketStatusToUsed/{ticketId}")
+    public ResponseEntity<?> updateTicketStatusToUsed(@PathVariable int ticketId){
+        Ticket ticket = ticketService.updateTicketStatusToUsed(ticketId);
+        return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
 }
