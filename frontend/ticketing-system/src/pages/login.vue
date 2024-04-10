@@ -7,6 +7,7 @@ import { requiredValidator } from '@validators';
 import { reactive } from 'vue';
 import axios from "@axios";
 import { useAppAbility } from '@/plugins/casl/useAppAbility';
+import { useRouter } from "vue-router";
 
 const customerForm = reactive({
     username: '',
@@ -21,6 +22,7 @@ const ticketOfficerForm = reactive({
     password: '',
 })
 
+const router = useRouter();
 const customerRefForm = ref();
 const managerRefForm = ref();
 const ticketOfficerRefForm = ref();
@@ -91,6 +93,10 @@ const login = async () => {
             localStorage.setItem("UserId", response.data.userId);
             localStorage.setItem("UserName", response.data.userName);
 
+            if (response.data.userType == "TicketOfficer") {
+                localStorage.setItem("EventId", response.data.eventId);
+            }
+
             const userAbilities = [
                 {
                     action: "manage",
@@ -100,6 +106,15 @@ const login = async () => {
 
             localStorage.setItem('userAbilities', JSON.stringify(userAbilities));
             ability.update(userAbilities);
+
+            if (response.data.userType == "Customer") {
+                router.push({ name: 'customer-Dashboard' });
+            }
+            // else if (response.data.userType == "Manager") {
+            //     router.push({ name: 'managerDashboard' });
+            // } else if (response.data.userType == "TicketOfficer") {
+            //     router.push({ name: 'ticketOfficerDashboard' });
+            // }
 
         })
         .catch(error => {

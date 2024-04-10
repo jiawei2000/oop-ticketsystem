@@ -30,7 +30,7 @@ const createEvent = async () => {
         price: price.value,
         stock: stock.value,
         cancellationFee: cancellationFee.value,
-        managerId: 1,
+        managerId: localStorage.getItem("UserId"),
     }
 
     console.log("Creating event...");

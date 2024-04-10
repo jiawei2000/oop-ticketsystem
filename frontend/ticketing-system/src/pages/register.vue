@@ -7,6 +7,7 @@ import { reactive } from 'vue'
 import axios from "@axios";
 import { requiredValidator, emailValidator, lengthValidator } from '@validators';
 import { useAppAbility } from '@/plugins/casl/useAppAbility';
+import { useRouter } from "vue-router";
 
 const form = reactive({
     username: '',
@@ -14,6 +15,7 @@ const form = reactive({
     password: '',
 })
 
+const router = useRouter();
 const isPasswordVisible = ref(false)
 const isLoading = ref(false);
 const showError = ref(false);
@@ -56,7 +58,7 @@ const register = async () => {
 
             localStorage.setItem('userAbilities', JSON.stringify(userAbilities));
             ability.update(userAbilities);
-
+            router.push({ name: 'customer-Dashboard' });
         })
         .catch(error => {
             console.log(error.message);

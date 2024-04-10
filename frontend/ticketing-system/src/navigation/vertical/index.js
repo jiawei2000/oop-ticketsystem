@@ -1,7 +1,7 @@
 export default [
     {
         title: 'Dashboard',
-        to: { name: 'index' },
+        to: { name: 'customer-Dashboard' },
         icon: { icon: 'bx-home-alt' },
         action: 'read',
         subject: 'Customer'
