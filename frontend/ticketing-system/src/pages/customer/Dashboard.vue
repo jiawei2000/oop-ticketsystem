@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" class="text-center">   
                 <h1>    
-                    Welcome Back, user!
+                    Welcome Back, {{ this.userId }}!
                 </h1>
             </v-col>
         </v-row>
@@ -42,11 +42,11 @@
                             </thead>
 
                             <tbody>
-                                <tr v-for="transaction in transactionHistory" :key="transaction.transactionId">
-                                    <td>{{ event.eventName }}</td>
-                                    <td>{{ event.venue }}</td>
-                                    <td>{{ formatDate(event.date) }}</td>
-                                    <td>{{ event.time }}</td>
+                                <tr v-for="transaction in transactionHistory" :key="transaction.transaction.transactionId">
+                                    <td>{{ transaction.transaction.date }}</td>
+                                    <td>{{ transaction.amountSpent }}</td>
+                                    <td>{{ transaction.eventName }}</td>
+                                    <td>{{ transaction.transaction.numTicketPurchased }}</td>
                                 </tr>
                             </tbody>
                         </VTable>
@@ -90,51 +90,6 @@
 </template>
 
 <script>
-// import axios from "@axios";
-// import { onMounted } from "vue";
-// import { useRouter } from "vue-router";
-
-// const router = useRouter();
-// const searchQuery = ref("");
-// const customerTransactions = ref([]);
-// const purchasedTickets = ref([]);
-
-// const getPurchasedTickets = async () => {
-//     const purchasedTicketsURL = "/customer/purchasedTickets";
-//     axios.get(purchasedTicketsURL)
-//         .then(response => {
-//             const data = response.data;
-//             purchasedTickets.value = data;
-//         })
-//         .catch(error => {
-//             console.log(error);
-//         });
-// }
-
-// const getCustomerTransactions = async () => {
-//     const customerTransactionsURL = "/customer/transactionHistory";
-//     axios.get(customerTransactionsURL)
-//         .then(response => {
-//             const data = response.data;
-//             customerTransactions.value = data;
-//         })
-//         .catch(error => {
-//             console.log(error);
-//         });
-// }
-
-
-
-// const formatDate = (dateString) => {
-//     const [year, month, day] = dateString.split('-');
-//     return `${day}-${month}-${year}`;
-// }
-
-// onMounted(() => {
-//     const userId = localStorage.getItem("UserId");
-//     getCustomerTransactions();
-//     getPurchasedTickets();
-// });
 import axios from 'axios';
 export default {
     data() {
@@ -142,6 +97,7 @@ export default {
             transactionHistory: [],
             customerEvents: [],
             userId: localStorage.getItem("UserId"),
+            // username: localStorage.getItem("username"),
             userBalance: 0
         };
     },
@@ -154,10 +110,20 @@ export default {
             } catch (error) {
                 console.error("Error fetching customer events:", error);
             }
+        },
+        async fetchTransactionHistory() {
+            try {
+                const URL = `http://localhost:8080/api/customer/transactionDetailsHistory/${this.userId}`;
+                const response = await axios.get(URL);
+                this.transactionHistory = response.data;
+            } catch (error) {
+                console.error("Error fetching transaction history:", error);
+            }
         }
     },
     mounted() {
         this.fetchCustomerEvents();
+        this.fetchTransactionHistory();
     }
 }
 </script>
