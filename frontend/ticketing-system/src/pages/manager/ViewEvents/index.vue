@@ -132,9 +132,9 @@ const generateReports = async () => {
     await axios.get(reportURL)
             .then(async response => {
                 console.log(response.data);
+                var rows = [];
                 for (const eventData of response.data) {
-                    const filename = eventData.event.eventName + "_event_report.csv";
-                    const rows = [
+                    rows.push(
                       ["event_ID", eventData.event.eventId],
                       ["manager_ID", eventData.event.managerId],
                       ["event_name", eventData.event.eventName],
@@ -146,18 +146,19 @@ const generateReports = async () => {
                       ["sales", eventData.sales],
                       ["attendance", eventData.attendance],
                       ["number_of_refunds", eventData.noRefunds],
-                      ["number_of_cancellations", eventData.noCancelled]
-                    ];
-                    let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
-                    var encodedUri = encodeURI(csvContent);
-                    var link = document.createElement("a");
-                    link.setAttribute("href", encodedUri);
-                    link.setAttribute("download", filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    console.log("Report Generated Successfully");
-                    document.body.removeChild(link);
+                      ["number_of_cancellations", eventData.noCancelled],
+                      ["", ""]
+                    );
                 }
+                let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "event_reports.csv");
+                 document.body.appendChild(link);
+                 link.click();
+                 console.log("Report Generated Successfully");
+                 document.body.removeChild(link);
             })
             .catch(error => {
                 console.log(error);
