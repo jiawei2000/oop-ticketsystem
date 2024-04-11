@@ -39,8 +39,7 @@ const formData = reactive({
     time: "",
     price: 0,
     stock: 0,
-    cancellationFee: 0,
-    quantity: 0
+    cancellationFee: 0
 });
 
 //for View Event Details modal
@@ -129,46 +128,48 @@ const cancelEvent = async (currEventId) => {
     }
 }
 
-const getReport = async (currEventId) => {
-    const reportURL = "manager/getEventStatistics/" + currEventId;
+const generateReports = async (currEventId) => {
+    const reportURL = "manager/getEventStatistics";
     await axios.get(reportURL)
             .then(async response => {
                 console.log(response.data);
                 const fs = require("fs");
                 const { stringify } = require("csv-stringify");
-                const filename = response.data.event.eventName + "_event_report.csv";
-                const writableStream = fs.createWriteStream(filename);
+                for (const eventData of response.data) {
+                    const filename = eventData.event.eventName + "_event_report.csv";
+                    const writableStream = fs.createWriteStream(filename);
 
-                const columns = [
-                  "event_ID",
-                  "manager_ID",
-                  "event_name",
-                  "venue",
-                  "date",
-                  "total_revenue",
-                  "sale_revenue",
-                  "refund_revenue",
-                  "sales",
-                  "attendance",
-                  "number_of_refunds",
-                  "number_of_cancelled",
-                ];
+                    const columns = [
+                      "event_ID",
+                      "manager_ID",
+                      "event_name",
+                      "venue",
+                      "date",
+                      "total_revenue",
+                      "sale_revenue",
+                      "refund_revenue",
+                      "sales",
+                      "attendance",
+                      "number_of_refunds",
+                      "number_of_cancelled",
+                    ];
 
-                const stringifier = stringify({ header: true, columns: columns });
-                stringifier.write(response.data.event.eventId);
-                stringifier.write(response.data.event.managerId);
-                stringifier.write(response.data.event.eventName);
-                stringifier.write(response.data.event.venue);
-                stringifier.write(response.data.event.date);
-                stringifier.write(response.data.totalRevenue);
-                stringifier.write(response.data.saleRevenue);
-                stringifier.write(response.data.refundRevenue);
-                stringifier.write(response.data.sales);
-                stringifier.write(response.data.attendance);
-                stringifier.write(response.data.noRefunds);
-                stringifier.write(response.data.noCancelled);
-                stringifier.pipe(writableStream);
-                console.log("Report Generated Successfully");
+                    const stringifier = stringify({ header: true, columns: columns });
+                    stringifier.write(response.data.event.eventId);
+                    stringifier.write(response.data.event.managerId);
+                    stringifier.write(response.data.event.eventName);
+                    stringifier.write(response.data.event.venue);
+                    stringifier.write(response.data.event.date);
+                    stringifier.write(response.data.totalRevenue);
+                    stringifier.write(response.data.saleRevenue);
+                    stringifier.write(response.data.refundRevenue);
+                    stringifier.write(response.data.sales);
+                    stringifier.write(response.data.attendance);
+                    stringifier.write(response.data.noRefunds);
+                    stringifier.write(response.data.noCancelled);
+                    stringifier.pipe(writableStream);
+                    console.log("Report Generated Successfully");
+                }
                 closeModal();
             })
             .catch(error => {
@@ -301,7 +302,8 @@ const getReport = async (currEventId) => {
                             <td>
                                 <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
                                 <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
-                                <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn>
+                                <p v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn></p>
+                                <p v-else> <v-btn color="error" variant="outlined" disabled=true>Cancel Event</v-btn></p>
                             </td>
                         </tr>
                     </tbody>
