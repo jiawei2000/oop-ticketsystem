@@ -208,7 +208,7 @@ const getCurrentDate = () => {
                 </v-card-title>
                 <v-card-text class="text-center">
                     <p v-if=isSuccessful><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{
-            purchaseMessage }}</p>
+                        purchaseMessage }}</p>
                     <p v-else><v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>{{ purchaseMessage }}</p>
                 </v-card-text>
                 <v-card-actions class="justify-center">
