@@ -112,8 +112,27 @@ const cancelEvent = async () => {
     })
 }
 
-const editEventDetails = async () => {
+const setCancellationFee = async () => {
   console.log("B");
+  console.log(formData.newFee);
+  let send_CancellationFee_data = {
+    "newFee": formData.newFee
+  };
+  const setCancellationFeeURL = "manager/updateEventCancellationFee/" + eventId.value;
+  axios.post(setCancellationFeeURL, send_CancellationFee_data)
+    .then(response => {
+      CloseFeeFormModal();
+      message.value = "Cancellation Fee Successfully Updated";
+      getEvent();
+      isSuccessful.value = true;
+      OpenModal();
+    })
+    .catch(error => {
+      message.value = error.response.data;
+      isSuccessful.value = false;
+      CloseFeeFormModal();
+      OpenModal();
+    })
 }
 
 const removeTicketOfficer = async (ticketOfficerId) => {
@@ -134,21 +153,20 @@ const removeTicketOfficer = async (ticketOfficerId) => {
 }
 
 const formData = reactive({
-  username:"",
-  password:"",
+  username: "",
+  password: "",
+  newFee: ""
 });
 
 const createTicketOfficer = async () => {
-  // console.log(formData.username);
-  // console.log(formData.password);
   let send_TicketOfficer_data = {
-    "eventId": eventId.value, 
+    "eventId": eventId.value,
     "userName": formData.username,
     "password": formData.password
   };
   const createTicketOfficerURL = "users/createTicketOfficer";
   axios.post(createTicketOfficerURL, send_TicketOfficer_data)
-    .then(response =>{
+    .then(response => {
       CloseFormModal();
       message.value = "Ticket Officer added successfully.";
       getTicketOfficer();
@@ -178,6 +196,15 @@ const OpenFormModal = () => {
 }
 const CloseFormModal = () => {
   formModal.value = false;
+}
+//for setCFee modal 
+const feeFormModal = ref(false);
+const OpenFeeFormModal = () => {
+  formData.newFee = event.cancellationFee;
+  feeFormModal.value = true;
+}
+const CloseFeeFormModal = () => {
+  feeFormModal.value = false;
 }
 
 const activeTab = ref(0);
@@ -230,6 +257,33 @@ const activeTab = ref(0);
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Set Cancellation fee -->
+  <v-dialog v-model="feeFormModal" max-width="50%">
+    <v-card>
+      <v-card-title>
+        <span class="headline">Set Cancellation Fee</span>
+      </v-card-title>
+      <v-card-text>
+        <!-- Form fields -->
+        <v-form @submit.prevent="setCancellationFee">
+          <v-container>
+            <!-- cancellation fee -->
+            <v-row>
+              <v-col cols="12">
+                <v-text-field label="Cancellation Fee($)" v-model="formData.newFee" type=number></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn @click="CloseFeeFormModal">Close</v-btn>
+        <v-btn color="primary" @click="setCancellationFee">Set</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <v-card>
     <!-- Display Event Details -->
     <v-tabs v-model="activeTab">
@@ -282,7 +336,7 @@ const activeTab = ref(0);
             </v-form>
           </v-card-text>
           <v-card-actions class="justify-end">
-            <v-btn variant="outlined" secondary="error" @click=editEventDetails>Edit Details</v-btn>
+            <v-btn variant="outlined" secondary="error" @click=OpenFeeFormModal>Set Cancellation Fee</v-btn>
             <v-btn variant="outlined" color="error" @click=cancelEvent>Cancel</v-btn>
           </v-card-actions>
         </v-card>

@@ -48,6 +48,12 @@ public class EventService {
 
     public Event updateEventCancellationFee(int eventId, double newFee) {
         Event event = eventRepository.getReferenceById(eventId);
+        if (newFee > event.getPrice()) {
+            // The new cancellation fee, set at $50, cannot exceed the ticket price of $40.
+            throw new IllegalArgumentException(
+                    String.format("The new cancellation fee, set at $%.2f, cannot exceed the ticket price of $%.2f.",
+                            newFee, event.getPrice()));
+        }
         event.setCancellationFee(newFee);
         return eventRepository.save(event);
     }
@@ -59,7 +65,7 @@ public class EventService {
         }
         List<Ticket> tickets = ticketService.updateTicketStatusByEventId(eventId, "Cancelled");
         transactionService.updateTransactionStatusByEventId(eventId, "Cancelled");
-        //Handle Refund
+        // Handle Refund
         double refundAmount = event.getPrice() - event.getCancellationFee();
         transactionService.refundUsersByEventId(eventId, refundAmount);
         event.setStatus("Cancelled");
@@ -74,20 +80,20 @@ public class EventService {
             throw new IllegalArgumentException("Event Id " + eventId + " not found.");
         }
         report.setEvent(event);
-        //Tickets sold
+        // Tickets sold
         int sales = ticketService.getTicketsSoldByEventId(eventId);
         report.setSales(sales);
-        //No refunds
+        // No refunds
         int noRefunds = ticketService.getTicketsRefundedByEventId(eventId);
         report.setNoRefunds(noRefunds);
-        //No attended
+        // No attended
         int attendance = (ticketService.getTicketsAttendedByEventId(eventId));
         report.setAttendance(attendance);
-        //No Cancelled
+        // No Cancelled
         int noCancelled = ticketService.getTicketsCancelledByEventId(eventId);
         report.setNoCancelled(noCancelled);
 
-        //Revenue
+        // Revenue
         double salesRevenue = event.getPrice() * sales;
         double cancellationRevenue = event.getCancellationFee() * noRefunds;
         double totalRevenue = salesRevenue + cancellationRevenue;

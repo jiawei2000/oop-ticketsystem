@@ -37,9 +37,13 @@ public class ManagerController {
     }
 
     @PostMapping("/updateEventCancellationFee/{eventId}")
-    public ResponseEntity<Event> updateEventCancellationFee(@PathVariable int eventId, @RequestBody Map<String, Object> body) {
-        Event event = eventService.updateEventCancellationFee(eventId, (Double) body.get("newFee"));
-        return new ResponseEntity<>(event, HttpStatus.OK);
+    public ResponseEntity<?> updateEventCancellationFee(@PathVariable int eventId, @RequestBody Map<String, Double> body) {
+        try {
+            Event event = eventService.updateEventCancellationFee(eventId, body.get("newFee"));
+            return new ResponseEntity<>(event, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/cancelEvent/{eventId}")
