@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" class="text-center">   
                 <h1>    
-                    Welcome Back, {{ this.userId }}!
+                    Welcome Back, {{ this.username }}!
                 </h1>
             </v-col>
         </v-row>
@@ -15,38 +15,38 @@
                         <div class="mb-3">
                             <v-text>
                                 <v-icon>mdi-account</v-icon>
-                                Balance
+                                User Balance
                             </v-text>
                         </div>
 
                         <div class="mb-10">
                             <v-text>
-                                Credit Remaining:
+                                Credit Remaining: ${{ this.userBalance }}
                             </v-text>
                         </div>
-
+                    
                         <div>
                             <v-text>
-                                <v-icon>mdi-history</v-icon>
-                               Transaction History 
+                                <v-icon>mdi-ticket</v-icon>
+                                Purchased Tickets
                             </v-text>
                         </div>
                         <VTable class="text-no-wrap">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Amount Spent</th>
                                     <th>Event</th>
-                                    <th>Quantity</th>
+                                    <th>Venue</th>
+                                    <th>Price</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <tr v-for="transaction in transactionHistory" :key="transaction.transaction.transactionId">
-                                    <td>{{ transaction.transaction.date }}</td>
-                                    <td>{{ transaction.amountSpent }}</td>
-                                    <td>{{ transaction.eventName }}</td>
-                                    <td>{{ transaction.transaction.numTicketPurchased }}</td>
+                                <tr v-for="event in customerEvents" :key="event.eventId">
+                                    <td>{{ event.eventName }}</td>
+                                    <td>{{ event.venue }}</td>
+                                    <td>{{ event.price }}</td>
+                                    <td>{{ event.date }}</td>
                                 </tr>
                             </tbody>
                         </VTable>
@@ -59,27 +59,27 @@
                     <VCardText>
                         <div class="mb-3">
                             <v-text>
-                                <v-icon>mdi-ticket</v-icon>
-                                Purchased Tickets
+                                <v-icon>mdi-history</v-icon>
+                                Transaction History
                             </v-text>
                         </div>
                     </VCardText>
                     <VTable class="text-no-wrap">
                         <thead>
                             <tr>
-                                <th>Event</th>
-                                <th>Venue</th>
-                                <th>Price</th>
                                 <th>Date</th>
+                                <th>Amount Spent</th>
+                                <th>Event</th>
+                                <th>Quantity</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr v-for="event in customerEvents" :key="event.eventId">
-                                <td>{{ event.eventName }}</td>
-                                <td>{{ event.venue }}</td>
-                                <td>{{ event.price }}</td>
-                                <td>{{ event.date }}</td>
+                            <tr v-for="transaction in transactionHistory" :key="transaction.transaction.transactionId">
+                                <td>{{ transaction.transaction.date }}</td>
+                                <td>{{ transaction.amountSpent }}</td>
+                                <td>{{ transaction.eventName }}</td>
+                                <td>{{ transaction.transaction.numTicketPurchased }}</td>
                             </tr>
                         </tbody>
                     </VTable>                                                               
@@ -97,11 +97,21 @@ export default {
             transactionHistory: [],
             customerEvents: [],
             userId: localStorage.getItem("UserId"),
-            // username: localStorage.getItem("username"),
+            username: localStorage.getItem("UserName"),
             userBalance: 0
         };
     },
     methods: {
+        async fetchCustomerBalance() {
+            try {
+                const URL = `http://localhost:8080/api/customer/details/${this.userId}`;
+                const response = await axios.get(URL);
+                const userDetails = response.data;
+                this.userBalance = userDetails.balance;
+            } catch (error) {
+                console.error("Error fetching customer balance:", error);
+            }
+        },
         async fetchCustomerEvents() {
             try {
                 const URL = `http://localhost:8080/api/customer/customerEvents/${this.userId}`;
@@ -124,6 +134,7 @@ export default {
     mounted() {
         this.fetchCustomerEvents();
         this.fetchTransactionHistory();
+        this.fetchCustomerBalance();
     }
 }
 </script>
