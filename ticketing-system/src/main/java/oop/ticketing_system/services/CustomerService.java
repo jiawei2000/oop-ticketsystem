@@ -225,4 +225,15 @@ public class CustomerService {
         }
         return retStr;
     }
+
+    public Customer getCustomerDetails(int customerId) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        Customer customer = optionalCustomer.orElse(null);
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer Id " + customerId + " not found.");
+        }
+        //Redact password
+        customer.setPassword("");
+        return customer;
+    }
 }

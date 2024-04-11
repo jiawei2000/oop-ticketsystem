@@ -20,6 +20,17 @@ public class CustomerController {
     @Autowired
     private EventService eventService;
 
+    @GetMapping("/details/{customerId}")
+    public ResponseEntity<?> getCustomerDetails(@PathVariable int customerId) {
+        try {
+            Customer response = customerService.getCustomerDetails(customerId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     //displays "Active" events
     @GetMapping("/displayEvents")
     public ResponseEntity<List<Event>> displayAllEvents() {

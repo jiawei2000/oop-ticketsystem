@@ -47,4 +47,8 @@ public class User {
         this.type = type;
     }
 
+    public void setPassword(String password){
+        this.password = password;
+    }
+
 }
