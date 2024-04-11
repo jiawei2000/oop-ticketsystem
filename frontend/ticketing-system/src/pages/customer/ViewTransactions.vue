@@ -33,7 +33,7 @@
               <td>{{ transaction.transaction.status }}</td>
               <td>
                 <v-btn class="mr-2" variant="outlined" @click="redirectToViewTicketPage(transaction.transaction.transactionId, transaction.transaction.eventId)">View Details</v-btn>
-                <v-btn v-if="transaction.transaction.status !== 'Refunded'" variant="outlined" color="red" @click="confirmRefund(transaction.transaction.transactionId)">Refund Transaction</v-btn>
+                <v-btn v-if="transaction.transaction.status !== 'Refunded' && transaction.transaction.status !== 'Cancelled'" variant="outlined" color="red" @click="confirmRefund(transaction.transaction.transactionId)">Refund Transaction</v-btn>
               </td>
             </tr>
           </tbody>
