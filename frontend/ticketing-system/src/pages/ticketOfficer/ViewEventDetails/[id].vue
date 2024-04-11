@@ -1,7 +1,7 @@
 <script setup>
+import axios from "@axios";
 import { ref } from 'vue';
 import { useRoute, useRouter } from "vue-router";
-import axios from "@axios";
 
 const router = useRouter();
 const eventId = ref(null);
@@ -94,20 +94,20 @@ const cancelEvent = async () => {
   console.log("A");
   const cancelEventURL = "manager/cancelEvent/" + eventId.value;
   axios.put(cancelEventURL)
-  .then(response => {
+    .then(response => {
       const data = response.data;
       console.log(data);
       //cancel successful
       message.value = "Event successfully cancelled";
       getEvent();
-      isSuccessful.value = true; 
+      isSuccessful.value = true;
       OpenModal();
     })
     .catch(error => {
       console.log(error.message);
       //cancel unsuccessful 
       message.value = error.response.data;
-      isSuccessful.value = false; 
+      isSuccessful.value = false;
       OpenModal();
     })
 }
@@ -132,6 +132,35 @@ const removeTicketOfficer = async (ticketOfficerId) => {
       console.log(error.message);
     })
 }
+
+const formData = reactive({
+  username:"",
+  password:"",
+});
+
+const createTicketOfficer = async () => {
+  // console.log(formData.username);
+  // console.log(formData.password);
+  let send_TicketOfficer_data = {
+    "eventId": eventId.value, 
+    "userName": formData.username,
+    "password": formData.password
+  };
+  const createTicketOfficerURL = "users/createTicketOfficer";
+  axios.post(createTicketOfficerURL, send_TicketOfficer_data)
+    .then(response =>{
+      CloseFormModal();
+      message.value = "Ticket Officer added successfully.";
+      getTicketOfficer();
+      isSuccessful.value = true;
+      OpenModal();
+    })
+    .catch(error => {
+      console.log(error.message);
+    })
+
+}
+
 //for message modal 
 const isSuccessful = ref(false);
 const message = ref('');
@@ -141,6 +170,14 @@ const OpenModal = () => {
 }
 const CloseModal = () => {
   MsgModal.value = false;
+}
+//for creation form modal 
+const formModal = ref(false);
+const OpenFormModal = () => {
+  formModal.value = true;
+}
+const CloseFormModal = () => {
+  formModal.value = false;
 }
 
 const activeTab = ref(0);
@@ -162,8 +199,37 @@ const activeTab = ref(0);
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <!-- TO creation modal -->
-
+  <!-- TO creation form modal -->
+  <v-dialog v-model="formModal" max-width="50%">
+    <v-card>
+      <v-card-title>
+        <span class="headline">Create Ticket Officer</span>
+      </v-card-title>
+      <v-card-text>
+        <!-- Form fields -->
+        <v-form @submit.prevent="createTicketOfficer">
+          <v-container>
+            <!-- Username -->
+            <v-row>
+              <v-col cols="12">
+                <v-text-field label="Username" v-model="formData.username"></v-text-field>
+              </v-col>
+            </v-row>
+            <!-- Password -->
+            <v-row>
+              <v-col cols="12">
+                <v-text-field label="Password" v-model="formData.password"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn @click="CloseFormModal">Close</v-btn>
+        <v-btn color="primary" @click="createTicketOfficer">Create</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card>
     <!-- Display Event Details -->
     <v-tabs v-model="activeTab">
@@ -297,7 +363,7 @@ const activeTab = ref(0);
             </VTable>
           </VCardText>
           <v-card-actions class="justify-end">
-            <v-btn  @click=cancelEvent>Add Ticket Officer</v-btn>
+            <v-btn @click="OpenFormModal">Add Ticket Officer</v-btn>
           </v-card-actions>
         </VCard>
       </v-window-item>
