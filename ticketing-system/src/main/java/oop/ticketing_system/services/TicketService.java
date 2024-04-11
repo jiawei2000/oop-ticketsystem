@@ -82,8 +82,6 @@ public class TicketService {
         retMap.put("username", customer.getUserName());
         retMap.put("type", ticket.getType());
         retMap.put("status", ticket.getStatus());
-
-
         return retMap;
     }
 

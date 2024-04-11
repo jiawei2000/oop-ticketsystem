@@ -81,4 +81,18 @@ public class ManagerController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping("/removeTicketOfficers/{ticketOfficerId}")
+    public ResponseEntity<?> removeTicketOfficer(@PathVariable int ticketOfficerId){
+        Map<String, Object> isRemove = ticketOfficerService.removeTicketOfficer(ticketOfficerId);
+        //ticketofficerId and username
+        int code = (Integer)isRemove.get("code");
+        String username = (String)isRemove.get("username");
+
+        if (code == 400){
+            return new ResponseEntity<>(String.format("[TicketOfficerId: %d, Username: %s] removal was unsuccessful.", ticketOfficerId, username), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(String.format("[TicketOfficerId: %d, Username: %s] was successfully removed.", ticketOfficerId, username), HttpStatus.OK); 
+    }
 }
