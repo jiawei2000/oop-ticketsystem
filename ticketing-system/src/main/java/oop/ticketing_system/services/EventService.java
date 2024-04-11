@@ -55,7 +55,7 @@ public class EventService {
     public Event cancelEvent(int eventId) {
         Event event = eventRepository.getReferenceById(eventId);
         if (!event.getStatus().equals("Active")) {
-            throw new IllegalArgumentException("Event Id " + eventId + " is not Active");
+            throw new IllegalArgumentException("EventId: " + eventId + " is not 'Active'.");
         }
         List<Ticket> tickets = ticketService.updateTicketStatusByEventId(eventId, "Cancelled");
         transactionService.updateTransactionStatusByEventId(eventId, "Cancelled");

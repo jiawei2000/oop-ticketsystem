@@ -92,6 +92,24 @@ const getTicketOfficer = async () => {
 
 const cancelEvent = async () => {
   console.log("A");
+  const cancelEventURL = "manager/cancelEvent/" + eventId.value;
+  axios.put(cancelEventURL)
+  .then(response => {
+      const data = response.data;
+      console.log(data);
+      //cancel successful
+      message.value = "Event successfully cancelled";
+      getEvent();
+      isSuccessful.value = true; 
+      OpenModal();
+    })
+    .catch(error => {
+      console.log(error.message);
+      //cancel unsuccessful 
+      message.value = error.response.data;
+      isSuccessful.value = false; 
+      OpenModal();
+    })
 }
 
 const editEventDetails = async () => {
@@ -107,13 +125,15 @@ const removeTicketOfficer = async (ticketOfficerId) => {
       console.log(data);
       message.value = data;
       getTicketOfficer(); //update table 
+      isSuccessful.value = true;
       OpenModal(); //open message 
     })
     .catch(error => {
       console.log(error.message);
     })
 }
-//for modal 
+//for message modal 
+const isSuccessful = ref(false);
 const message = ref('');
 const MsgModal = ref(false);
 const OpenModal = () => {
@@ -134,14 +154,16 @@ const activeTab = ref(0);
         <span class="headline">Message</span>
       </v-card-title>
       <v-card-text class="text-center">
-        <p><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{ message }}</p>
-        <!-- <p v-else><v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>{{ message }}</p> -->
+        <p v-if=isSuccessful><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{ message }}</p>
+        <p v-else><v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>{{ message }}</p>
       </v-card-text>
       <v-card-actions class="justify-center">
         <v-btn color="primary" @click="CloseModal">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <!-- TO creation modal -->
+
   <v-card>
     <!-- Display Event Details -->
     <v-tabs v-model="activeTab">
@@ -256,6 +278,7 @@ const activeTab = ref(0);
                 <tr>
                   <th>TicketOfficerId</th>
                   <th>Username</th>
+                  <th>Password</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -264,6 +287,7 @@ const activeTab = ref(0);
                 <tr v-for="ticketOfficer in ticketOfficers" :key="ticketOfficer.userId">
                   <td>{{ ticketOfficer.userId }}</td>
                   <td>{{ ticketOfficer.userName }}</td>
+                  <td>{{ ticketOfficer.password }}</td>
                   <td>
                     <v-btn variant="outlined" color="error"
                       @click="removeTicketOfficer(ticketOfficer.userId)">Remove</v-btn>
