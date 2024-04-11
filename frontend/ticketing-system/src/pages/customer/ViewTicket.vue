@@ -43,6 +43,14 @@ const fetchQRCodeURLs = async (tickets) => {
   }
 };
 
+const print = () => {
+    window.print();
+};
+
+const goBack = () => {
+  window.location.href = 'http://localhost:5173/customer/viewtransactions';
+};
+
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const customerId = urlParams.get("customerId");
@@ -54,14 +62,17 @@ onMounted(() => {
   }
 });
 
-const print = () => {
-    window.print();
-};
 </script>
 
 
 <template>
   <section>
+    <div class="d-flex justify-between mb-4">
+      <!-- Back button -->
+      <div>
+        <VBtn @click="goBack" class="mr-4">Back</VBtn>
+      </div>
+    </div>
     <VCard>
       <VCardText class="d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row pa-10 pb-6">
         <template v-for="(ticket, index) in ticketInfo" :key="ticket.ticketId">

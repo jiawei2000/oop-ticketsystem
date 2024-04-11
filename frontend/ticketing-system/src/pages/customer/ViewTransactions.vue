@@ -32,7 +32,7 @@
               <td>{{ transaction.tickets[0].type }}</td>
               <td>{{ transaction.transaction.status }}</td>
               <td>
-                <v-btn class="mr-2" variant="outlined" @click="redirectToViewTicketPage(1, transaction.transaction.transactionId, transaction.transaction.eventId)">View Details</v-btn>
+                <v-btn class="mr-2" variant="outlined" @click="redirectToViewTicketPage(transaction.transaction.transactionId, transaction.transaction.eventId)">View Details</v-btn>
                 <v-btn v-if="transaction.transaction.status !== 'Refunded'" variant="outlined" color="red" @click="confirmRefund(transaction.transaction.transactionId)">Refund Transaction</v-btn>
               </td>
             </tr>
@@ -64,11 +64,12 @@ import { onMounted, ref } from "vue";
 const searchQuery = ref("");
 const transactions = ref([]);
 const showConfirmationDialog = ref(false);
+const customerId = localStorage.getItem("UserId"); // Replace with actual customer ID
 let selectedTransactionId = null;
 
 const fetchTransactions = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/customer/transactionDetailsHistory/1');
+    const response = await axios.get(`http://localhost:8080/api/customer/transactionDetailsHistory/${customerId}`);
     transactions.value = response.data.map(item => ({
       eventName: item.eventName,
       transaction: item.transaction,
@@ -105,7 +106,9 @@ const proceedRefund = async () => {
   }
 };
 
-const redirectToViewTicketPage = (customerId, transactionId, eventId) => {
+const redirectToViewTicketPage = (transactionId, eventId) => {
+  const customerId = localStorage.getItem("UserId");
   window.location.href = `http://localhost:5173/customer/viewticket?customerId=${customerId}&eventId=${eventId}&transactionId=${transactionId}`;
 };
+
 </script>
