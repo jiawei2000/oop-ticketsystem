@@ -7,7 +7,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const searchQuery = ref("");
 const events = ref([]);
-const managerId = 1; // This is hardcoded for testing purposes, it will need to be changed dynamically
 //Event script
 const getEvents = async () => {
     const displayEventURL = "events"
@@ -128,53 +127,40 @@ const cancelEvent = async (currEventId) => {
     }
 }
 
-const generateReports = async (currEventId) => {
+const generateReports = async () => {
     const reportURL = "manager/getEventStatistics";
     await axios.get(reportURL)
             .then(async response => {
                 console.log(response.data);
-                const fs = require("fs");
-                const { stringify } = require("csv-stringify");
                 for (const eventData of response.data) {
                     const filename = eventData.event.eventName + "_event_report.csv";
-                    const writableStream = fs.createWriteStream(filename);
-
-                    const columns = [
-                      "event_ID",
-                      "manager_ID",
-                      "event_name",
-                      "venue",
-                      "date",
-                      "total_revenue",
-                      "sale_revenue",
-                      "refund_revenue",
-                      "sales",
-                      "attendance",
-                      "number_of_refunds",
-                      "number_of_cancelled",
+                    const rows = [
+                      ["event_ID", eventData.event.eventId],
+                      ["manager_ID", eventData.event.managerId],
+                      ["event_name", eventData.event.eventName],
+                      ["venue", eventData.event.venue],
+                      ["date", eventData.event.date],
+                      ["total_revenue", eventData.totalRevenue],
+                      ["sales_revenue", eventData.saleRevenue],
+                      ["refund_revenue", eventData.refundRevenue],
+                      ["sales", eventData.sales],
+                      ["attendance", eventData.attendance],
+                      ["number_of_refunds", eventData.noRefunds],
+                      ["number_of_cancellations", eventData.noCancelled]
                     ];
-
-                    const stringifier = stringify({ header: true, columns: columns });
-                    stringifier.write(response.data.event.eventId);
-                    stringifier.write(response.data.event.managerId);
-                    stringifier.write(response.data.event.eventName);
-                    stringifier.write(response.data.event.venue);
-                    stringifier.write(response.data.event.date);
-                    stringifier.write(response.data.totalRevenue);
-                    stringifier.write(response.data.saleRevenue);
-                    stringifier.write(response.data.refundRevenue);
-                    stringifier.write(response.data.sales);
-                    stringifier.write(response.data.attendance);
-                    stringifier.write(response.data.noRefunds);
-                    stringifier.write(response.data.noCancelled);
-                    stringifier.pipe(writableStream);
+                    let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+                    var encodedUri = encodeURI(csvContent);
+                    var link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", filename);
+                    document.body.appendChild(link);
+                    link.click();
                     console.log("Report Generated Successfully");
+                    document.body.removeChild(link);
                 }
-                closeModal();
             })
             .catch(error => {
-                console.log(error.response.data);
-                closeModal();
+                console.log(error);
             });
 }
 </script>
@@ -303,13 +289,14 @@ const generateReports = async (currEventId) => {
                                 <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
                                 <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
                                 <p v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn></p>
-                                <p v-else> <v-btn color="error" variant="outlined" disabled=true>Cancel Event</v-btn></p>
+                                <p v-else> <v-btn color="error" variant="outlined" :disabled="true">Cancel Event</v-btn></p>
                             </td>
                         </tr>
                     </tbody>
                 </VTable>
             </VCardText>
         </VCard>
+        <v-btn color="primary" variant="elevated" @click="generateReports">Generate Reports</v-btn>
     </section>
 </template>
 
