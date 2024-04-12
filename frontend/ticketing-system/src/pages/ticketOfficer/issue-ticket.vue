@@ -96,7 +96,7 @@ const getCurrentDate = () => {
 
 <template>
     <section>
-        <VCard title="Issue Ticket">
+        <VCard title="Issue Tickets">
             <VCardText>
                 <VForm ref="refForm" @submit.prevent>
                     <VRow>
@@ -135,7 +135,7 @@ const getCurrentDate = () => {
 
                         <VCol cols="12" class="d-flex gap-4">
                             <VBtn type="submit" @click="purchaseTicket()">
-                                <span v-if="!isLoading">Purchase</span>
+                                <span v-if="!isLoading">Issue</span>
                                 <VProgressCircular v-if="isLoading" indeterminate color="success" :size="25" />
                             </VBtn>
 
