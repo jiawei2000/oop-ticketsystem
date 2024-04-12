@@ -66,9 +66,7 @@ public class TicketService {
     public Map<String, Object> verifyTicketSerial(String serial, int eventId) {
         int ticketId = decryptTicketId(serial);
         Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
-
-        System.out.println("EventId: " + eventId);
-
+        
         Ticket ticket = optionalTicket.orElse(null);
 
         if (ticket == null) {

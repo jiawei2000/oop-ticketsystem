@@ -20,11 +20,11 @@ const router = createRouter({
 
 router.beforeEach(to => {
     // If not logged in redirect to login page
-    // if (localStorage.getItem('UserId') === null && (to.name != 'login' && to.name != 'register')) {
-    //     console.log("Not logged in");
-    //     return { name: 'login', query: to.query }
-    // }
-    
+    if (localStorage.getItem('UserId') === null && (to.name != 'login' && to.name != 'register')) {
+        console.log("Not logged in");
+        return { name: 'login', query: to.query }
+    }
+
 })
 
 
