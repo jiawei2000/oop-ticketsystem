@@ -3,10 +3,13 @@ package oop.ticketing_system.controllers;
 import oop.ticketing_system.models.Transaction;
 import oop.ticketing_system.models.TransactionTickets;
 import oop.ticketing_system.services.TicketOfficerService;
+import oop.ticketing_system.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class TicketOfficerController {
     @Autowired
     private TicketOfficerService ticketOfficerService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @PostMapping("/purchaseTicket")
     public ResponseEntity<?> purchasePhysicalTicket(@RequestBody Transaction transaction) {
@@ -25,4 +31,15 @@ public class TicketOfficerController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/getTransactionsByEventId/{eventId}")
+    public ResponseEntity<?> getEventStatistics(@PathVariable int eventId) {
+        try {
+            List<TransactionTickets> response = transactionService.getTransactionByEventId(eventId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

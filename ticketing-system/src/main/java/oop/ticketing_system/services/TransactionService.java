@@ -82,4 +82,24 @@ public class TransactionService {
         customer.setBalance(newBalance);
         return customerRepository.save(customer);
     }
+
+    public List<TransactionTickets> getTransactionByEventId(int eventId) {
+        List<Transaction> transactionList = transactionRepository.findByEventId(eventId);
+        List<TransactionTickets> transactionTicketsList = new ArrayList<>();
+
+        // Get Event
+        Event event = eventRepository.getReferenceById(eventId);
+
+        for(Transaction transaction : transactionList){
+            TransactionTickets transactionTickets = new TransactionTickets(transaction);
+            transactionTickets.setEventName(event.getEventName());
+            List<Ticket> ticketList = ticketRepository.findByTransactionId(transaction.getTransactionId());
+            transactionTickets.setTickets(ticketList);
+
+            transactionTickets.setAmountSpent(event.getPrice() * transaction.getNumTicketPurchased());
+
+            transactionTicketsList.add(transactionTickets);
+        }
+        return transactionTicketsList;
+    }
 }
