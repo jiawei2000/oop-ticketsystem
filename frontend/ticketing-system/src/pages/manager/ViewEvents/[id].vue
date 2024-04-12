@@ -341,9 +341,10 @@ const activeTab = ref(0);
                             </v-form>
                         </v-card-text>
                         <v-card-actions class="justify-end">
-                            <v-btn variant="outlined" secondary="error" @click=OpenFeeFormModal>Set Cancellation
-                                Fee</v-btn>
-                            <v-btn variant="outlined" color="error" @click=cancelEvent>Cancel Event</v-btn>
+                            <v-btn variant="outlined" secondary="error" @click=OpenFeeFormModal>Set Cancellation Fee</v-btn>
+                            <span v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined"
+                            @click="cancelEvent(event.eventId)">Cancel Event</v-btn></span>
+                            <span v-else> <v-btn color="error" variant="outlined" :disabled="true">Cancel Event</v-btn></span>
                         </v-card-actions>
                     </v-card>
 
