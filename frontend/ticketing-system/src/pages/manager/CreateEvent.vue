@@ -1,6 +1,7 @@
 <script setup>
 import { requiredValidator } from '@validators';
 import axios from "@axios";
+import { useRouter } from "vue-router";
 
 const refForm = ref();
 const eventName = ref('');
@@ -11,6 +12,7 @@ const price = ref('');
 const cancellationFee = ref('');
 const stock = ref('');
 const isLoading = ref(false);
+const router = useRouter();
 
 const createEvent = async () => {
     isLoading.value = true;
@@ -37,6 +39,8 @@ const createEvent = async () => {
     axios.post(createEventURL, data)
         .then(response => {
             console.log(response.data);
+            //Redirect to events list page
+            router.push({ name: "manager-ViewEvents" });
         })
         .catch(error => {
             console.log(error.message);

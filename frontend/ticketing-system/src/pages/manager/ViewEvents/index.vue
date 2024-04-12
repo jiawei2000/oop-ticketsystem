@@ -86,7 +86,7 @@ const viewStats = async (currEventId) => {
     const statsURL = "manager/getEventStatistics/" + currEventId;
     await axios.get(statsURL)
         .then(async response => {
-            // console.log(response.data);
+            console.log("Event: ", response.data);
             formData.eventId = response.data.event.eventId;
             formData.eventName = response.data.event.eventName;
             formData.status = response.data.event.status;
@@ -97,25 +97,24 @@ const viewStats = async (currEventId) => {
             formData.attendance = response.data.attendance;
             formData.noRefunds = response.data.noRefunds;
             formData.noCancelled = response.data.noCancelled;
-    })
-    .catch(error => {
-         console.log(error);
-    });
+        })
+        .catch(error => {
+            console.log(error);
+        });
     openModal();
 }
 
 const editEvent = (currEventId) => {
- router.push({ path: 'viewevents/' + currEventId });
- // WIP, eventually it should redirect to the editing page
+    router.push({ path: 'viewevents/' + currEventId });
+    // WIP, eventually it should redirect to the editing page
 
 }
 const cancelMessage = ref('');
 const isSuccessful = ref(true);
 const cancelEvent = async (currEventId) => {
-    if (await openCancel())
-    {
-    const cancelURL = "manager/cancelEvent/" + currEventId;
-    await axios.put(cancelURL)
+    if (await openCancel()) {
+        const cancelURL = "manager/cancelEvent/" + currEventId;
+        await axios.put(cancelURL)
             .then(async response => {
                 // console.log(response.data);
                 cancelMessage.value = "Event Successfully Cancelled";
@@ -136,33 +135,33 @@ const cancelEvent = async (currEventId) => {
 const generateReport = async () => {
     const reportURL = "manager/getEventStatistics";
     await axios.get(reportURL)
-            .then(async response => {
-                // console.log(response.data);
-                var rows = [["event_ID", "manager_ID", "event_name",
-                             "venue", "date", "total_revenue",
-                             "sales_revenue", "refund_revenue", "sales",
-                             "attendance", "refunds", "cancellations"]];
-                for (const eventData of response.data) {
-                    rows.push(
-                      [eventData.event.eventId, eventData.event.managerId, eventData.event.eventName,
-                      eventData.event.venue, eventData.event.date, eventData.totalRevenue,
-                      eventData.saleRevenue, eventData.refundRevenue, eventData.sales,
-                      eventData.attendance, eventData.noRefunds, eventData.noCancelled]
-                    );
-                }
-                let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
-                var encodedUri = encodeURI(csvContent);
-                var link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "event_statistics_report.csv");
-                 document.body.appendChild(link);
-                 link.click();
-                 console.log("Report Generated Successfully");
-                 document.body.removeChild(link);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        .then(async response => {
+            // console.log(response.data);
+            var rows = [["event_ID", "manager_ID", "event_name",
+                "venue", "date", "total_revenue",
+                "sales_revenue", "refund_revenue", "sales",
+                "attendance", "refunds", "cancellations"]];
+            for (const eventData of response.data) {
+                rows.push(
+                    [eventData.event.eventId, eventData.event.managerId, eventData.event.eventName,
+                    eventData.event.venue, eventData.event.date, eventData.totalRevenue,
+                    eventData.saleRevenue, eventData.refundRevenue, eventData.sales,
+                    eventData.attendance, eventData.noRefunds, eventData.noCancelled]
+                );
+            }
+            let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "event_statistics_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            console.log("Report Generated Successfully");
+            document.body.removeChild(link);
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
 </script>
 
@@ -187,28 +186,32 @@ const generateReport = async () => {
                             <!-- Event Name -->
                             <v-row>
                                 <v-col cols="12">
-                                     <v-text-field v-model="formData.eventName" label="Event Name" readonly></v-text-field>
+                                    <v-text-field v-model="formData.eventName" label="Event Name"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <!-- Event Status -->
                             <v-row>
                                 <v-col cols="12">
-                                     <v-text-field v-model="formData.status" label="Event Status"
-                                     readonly></v-text-field>
+                                    <v-text-field v-model="formData.status" label="Event Status"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <!-- Revenue -->
                             <v-row>
                                 <v-col cols="12">
-                                    <v-text-field v-model="formData.totalRevenue" label="Total Revenue ($)" readonly></v-text-field>
+                                    <v-text-field v-model="formData.totalRevenue" label="Total Revenue ($)"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="6">
-                                     <v-text-field v-model="formData.saleRevenue" label="Sales Revenue ($)" readonly></v-text-field>
+                                    <v-text-field v-model="formData.saleRevenue" label="Sales Revenue ($)"
+                                        readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="6">
-                                     <v-text-field v-model="formData.refundRevenue" label="Refunds Revenue ($)" readonly></v-text-field>
+                                    <v-text-field v-model="formData.refundRevenue" label="Refunds Revenue ($)"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                             <!-- Sales -->
@@ -220,13 +223,15 @@ const generateReport = async () => {
                             <!-- Attendance, Refunds and Cancellations -->
                             <v-row>
                                 <v-col cols="4" sm="12">
-                                    <v-text-field v-model="formData.attendance" label="Attendance" readonly></v-text-field>
+                                    <v-text-field v-model="formData.attendance" label="Attendance"
+                                        readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="4" sm="12">
                                     <v-text-field v-model="formData.noRefunds" label="Refunds" readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="4" sm="12">
-                                    <v-text-field v-model="formData.noCancelled" label="Cancellations" readonly></v-text-field>
+                                    <v-text-field v-model="formData.noCancelled" label="Cancellations"
+                                        readonly></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -238,7 +243,7 @@ const generateReport = async () => {
             </v-card>
         </v-dialog>
 
-<!-- Cancellation confirmation modal -->
+        <!-- Cancellation confirmation modal -->
         <v-dialog v-model="cancelConfirmModalOpen" max-width="500" @keydown.esc="closeCancel">
             <v-card>
                 <v-card-title>
@@ -255,14 +260,15 @@ const generateReport = async () => {
             </v-card>
         </v-dialog>
 
-<!-- Cancellation message modal -->
+        <!-- Cancellation message modal -->
         <v-dialog v-model="cancelModalOpen" max-width="500">
             <v-card>
                 <v-card-title>
                     <span class="headline">Cancellation Message</span>
                 </v-card-title>
                 <v-card-text class="text-center">
-                    <p v-if = isSuccessful><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{ cancelMessage }}</p>
+                    <p v-if=isSuccessful><v-icon class="success-icon">mdi-checkbox-marked-circle-outline</v-icon>{{
+            cancelMessage }}</p>
                     <p v-else><v-icon class="error-icon">mdi-alert-octagon-outline</v-icon>{{ cancelMessage }}</p>
                 </v-card-text>
                 <v-card-actions class="justify-center">
@@ -274,8 +280,9 @@ const generateReport = async () => {
         <!-- Event table -->
         <VCard>
             <VCardText>
-                <div class="mb-3">
+                <div class="mb-3 d-flex align-center flex-wrap gap-6">
                     <VTextField v-model="searchQuery" placeholder="Search Event" />
+                    <v-btn color="primary" variant="elevated" @click="generateReport">Generate Report</v-btn>
                 </div>
                 <VDivider />
 
@@ -289,6 +296,7 @@ const generateReport = async () => {
                             <th>Price</th>
                             <th>Stock</th>
                             <th>Cancellation Fee</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -302,18 +310,33 @@ const generateReport = async () => {
                             <td>${{ event.price }}</td>
                             <td>{{ event.stock }}</td>
                             <td>${{ event.cancellationFee }}</td>
+                            <td>{{ event.status }}</td>
                             <td>
-                                <v-btn variant="outlined" @click="viewStats(event.eventId)">View Statistics</v-btn>
-                                <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
-                                <p v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn></p>
-                                <p v-else> <v-btn color="error" variant="outlined" :disabled="true">Cancel Event</v-btn></p>
+                                <!-- <v-btn variant="outlined" @click="viewStats(event.eventId)">View Statistics</v-btn> -->
+                                <IconBtn @click="viewStats(event.eventId)">
+                                    <VIcon icon=" bx-show" />
+                                </IconBtn>
+
+                                <IconBtn @click="editEvent(event.eventId)">
+                                    <VIcon icon=" bx-edit" />
+                                </IconBtn>
+
+                                <IconBtn v-if="event.status === 'Active'" @click="cancelEvent(event.eventId)">
+                                    <VIcon icon=" bx-trash" />
+                                </IconBtn>
+
+                                <!-- <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit
+                                    Details</v-btn> -->
+
+                                <!-- <p v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined"
+                                        @click="cancelEvent(event.eventId)">Cancel Event</v-btn></p>
+                                <p v-else> <v-btn color="error" variant="outlined" :disabled="true">Cancel Event</v-btn>
+                                </p> -->
                             </td>
                         </tr>
                     </tbody>
                 </VTable>
             </VCardText>
         </VCard>
-        <v-btn color="primary" variant="elevated" @click="generateReport">Generate Report</v-btn>
     </section>
 </template>
-
