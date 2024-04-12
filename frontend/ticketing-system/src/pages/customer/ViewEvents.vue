@@ -62,9 +62,9 @@ const purchasingCloseModal = () => {
 
 const viewDetails = (currEventId) => {
     // router.push({ path: 'ViewEventDetails/' + eventId });
-    console.log(currEventId);
-    console.log(formData.value);
-    console.log(events.value);
+    // console.log(currEventId);
+    // console.log(formData.value);
+    // console.log(events.value);
     for (const event of events.value) {
         if (event.eventId == currEventId) {
             formData.eventId = event.eventId;
