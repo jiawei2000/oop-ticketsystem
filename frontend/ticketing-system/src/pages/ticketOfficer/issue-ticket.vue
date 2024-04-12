@@ -13,6 +13,7 @@ const price = ref('');
 const stock = ref('');
 const cancellationFee = ref('');
 const venue = ref('');
+const status = ref('');
 
 const isLoading = ref(false);
 const refForm = ref();
@@ -30,6 +31,7 @@ const getEventDetail = () => {
             stock.value = response.data.stock;
             cancellationFee.value = response.data.cancellationFee;
             venue.value = response.data.venue;
+            status.value = response.data.status;
         })
         .catch(error => {
             console.log(error.message);
@@ -38,8 +40,14 @@ const getEventDetail = () => {
 
 const purchaseTicket = async () => {
     isLoading.value = true;
-    const valid = refForm.value.validate();
+    const valid = await refForm.value.validate();
     if (valid.valid == false) {
+        isLoading.value = false;
+        return;
+    }
+
+    if (status.value === "Cancelled") {
+        alert("Event is cancelled. Cannot issue tickets.");
         isLoading.value = false;
         return;
     }
@@ -51,8 +59,6 @@ const purchaseTicket = async () => {
         userId: localStorage.getItem("UserId"),
         date: getCurrentDate()
     }
-    console.log("Data: ", data);
-
     axios.post(purchaseTicketURL, data)
         .then(response => {
             console.log(response.data);
@@ -137,10 +143,6 @@ const getCurrentDate = () => {
                             <VBtn type="submit" @click="purchaseTicket()">
                                 <span v-if="!isLoading">Issue</span>
                                 <VProgressCircular v-if="isLoading" indeterminate color="success" :size="25" />
-                            </VBtn>
-
-                            <VBtn type="reset" color="secondary" variant="tonal">
-                                Reset
                             </VBtn>
 
                         </VCol>

@@ -85,7 +85,7 @@ export const lengthValidator = (value, length) => {
   if (isEmpty(value))
     return true
   
-  return String(value).length === length || `The Min Character field must be at least ${length} characters`
+  return String(value).length >= length || `The Min Character field must be at least ${length} characters`
 }
 
 // 👉 Alpha-dash Validator
