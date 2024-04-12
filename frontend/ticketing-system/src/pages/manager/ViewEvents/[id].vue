@@ -326,11 +326,11 @@ const activeTab = ref(0);
                                     <!-- Price, Cancellation Fee, Stock -->
                                     <v-row>
                                         <v-col cols=4>
-                                            <v-text-field v-model="event.price" label="Price($)"
+                                            <v-text-field v-model="event.price" label="Price ($)"
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=4>
-                                            <v-text-field v-model="event.cancellationFee" label="Cancellation Fee($)"
+                                            <v-text-field v-model="event.cancellationFee" label="Cancellation Fee ($)"
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=4>
@@ -357,18 +357,18 @@ const activeTab = ref(0);
                                     <!-- Total sales -->
                                     <v-row>
                                         <v-col>
-                                            <v-text-field v-model="eventStatistics.totalRevenue" label="Total Revenue"
+                                            <v-text-field v-model="eventStatistics.totalRevenue" label="Total Revenue ($)"
                                                 readonly></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <!-- sales rev, refund rev, sales -->
                                     <v-row>
                                         <v-col cols=5>
-                                            <v-text-field v-model="eventStatistics.saleRevenue" label="Sales Revenue"
+                                            <v-text-field v-model="eventStatistics.saleRevenue" label="Sales Revenue ($)"
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=5>
-                                            <v-text-field v-model="eventStatistics.refundRevenue" label="Refund Revenue"
+                                            <v-text-field v-model="eventStatistics.refundRevenue" label="Refund Revenue ($)"
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=2>
@@ -383,12 +383,12 @@ const activeTab = ref(0);
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=4>
-                                            <v-text-field v-model="eventStatistics.noRefunds" label="Number of refunds"
+                                            <v-text-field v-model="eventStatistics.noRefunds" label="Refunds"
                                                 readonly></v-text-field>
                                         </v-col>
                                         <v-col cols=4>
                                             <v-text-field v-model="eventStatistics.noCancelled"
-                                                label="Number of tickets to cancel" readonly></v-text-field>
+                                                label="Cancellations" readonly></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
