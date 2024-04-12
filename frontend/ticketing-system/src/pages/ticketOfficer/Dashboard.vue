@@ -53,17 +53,15 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Time</th>
+                                <th>Mode of Purchase</th>
                                 <th>Quantity</th>
-                                <th></th>
                             </tr>
                         </thead>
 
                         <tbody>
                             <tr v-for="transaction in transactionHistory" :key="transaction.transaction.transactionId">
                                 <td>{{ transaction.transaction.date }}</td>
-                                <td>{{ transaction.amountSpent }}</td>
-                                <td>{{ transaction.eventName }}</td>
+                                <td>{{ transaction.tickets[0].type }}</td>
                                 <td>{{ transaction.transaction.numTicketPurchased }}</td>
                             </tr>
                         </tbody>
@@ -81,6 +79,7 @@ export default {
             transactionHistory: [],
             event: {},
             userId: localStorage.getItem('UserId'),
+            eventId: localStorage.getItem('EventId'),
             username: localStorage.getItem('UserName'),
         };
     },
@@ -94,9 +93,19 @@ export default {
                 console.error("Error fetching customer balance:", error);
             }
         },
+        async fetchTransactions() {
+            try {
+                const URL = `http://localhost:8080/api/ticketofficer/getTransactionsByEventId/${this.eventId}`;
+                const response = await axios.get(URL);
+                this.transactionHistory = response.data;
+            } catch (error) {
+                console.error("Error fetching customer balance:", error);
+            }
+        },
     },
     mounted() {
         this.fetchEvent();
+        this.fetchTransactions();
     }
 }
 </script>
