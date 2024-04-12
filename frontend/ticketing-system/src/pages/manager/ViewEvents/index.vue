@@ -33,12 +33,14 @@ onMounted(() => {
 const formData = reactive({
     eventId: 0,
     eventName: "",
-    venue: "",
-    date: "",
-    time: "",
-    price: 0,
-    stock: 0,
-    cancellationFee: 0
+    status: "",
+    totalRevenue: 0,
+    saleRevenue: 0,
+    refundRevenue: 0,
+    sales: 0,
+    attendance: 0,
+    noRefunds: 0,
+    noCancelled: 0
 });
 
 //for View Event Details modal
@@ -77,24 +79,28 @@ const cancelCloseModal = () => {
     cancelModalOpen.value = false;
 }
 
-const viewDetails = (currEventId) => {
-    // router.push({ path: 'ViewEventDetails/' + eventId });
-    console.log(currEventId);
-    console.log(formData.value);
-    console.log(events.value);
-    for (const event of events.value) {
-        if (event.eventId == currEventId) {
-            formData.eventId = event.eventId;
-            formData.eventName = event.eventName;
-            formData.venue = event.venue;
-            formData.date = formatDate(event.date);
-            formData.time = event.time;
-            formData.price = event.price;
-            formData.stock = event.stock;
-            formData.cancellationFee = event.cancellationFee;
-            break;
-        }
-    }
+const viewStats = async (currEventId) => {
+    // console.log(currEventId);
+    // console.log(formData.value);
+    // console.log(events.value);
+    const statsURL = "manager/getEventStatistics/" + currEventId;
+    await axios.get(statsURL)
+        .then(async response => {
+            // console.log(response.data);
+            formData.eventId = response.data.event.eventId;
+            formData.eventName = response.data.event.eventName;
+            formData.status = response.data.event.status;
+            formData.totalRevenue = response.data.totalRevenue;
+            formData.saleRevenue = response.data.saleRevenue;
+            formData.refundRevenue = response.data.refundRevenue;
+            formData.sales = response.data.sales;
+            formData.attendance = response.data.attendance;
+            formData.noRefunds = response.data.noRefunds;
+            formData.noCancelled = response.data.noCancelled;
+    })
+    .catch(error => {
+         console.log(error);
+    });
     openModal();
 }
 
@@ -111,7 +117,7 @@ const cancelEvent = async (currEventId) => {
     const cancelURL = "manager/cancelEvent/" + currEventId;
     await axios.put(cancelURL)
             .then(async response => {
-                console.log(response.data);
+                // console.log(response.data);
                 cancelMessage.value = "Event Successfully Cancelled";
                 closeModal();
                 isSuccessful.value = true;
@@ -131,7 +137,7 @@ const generateReports = async () => {
     const reportURL = "manager/getEventStatistics";
     await axios.get(reportURL)
             .then(async response => {
-                console.log(response.data);
+                // console.log(response.data);
                 var rows = [];
                 for (const eventData of response.data) {
                     rows.push(
@@ -178,39 +184,55 @@ const generateReports = async () => {
                     <!-- Form fields -->
                     <v-form @submit.prevent="cancelEvent">
                         <v-container>
-                            <!-- event name -->
+                            <!-- Event ID -->
                             <v-row>
                                 <v-col cols="12">
-                                    <v-text-field v-model="formData.eventName" label="Event Name"
-                                        readonly></v-text-field>
+                                    <v-text-field v-model="formData.eventId" label="Event ID" readonly></v-text-field>
                                 </v-col>
                             </v-row>
-                            <!-- venue -->
+                            <!-- Event Name -->
                             <v-row>
                                 <v-col cols="12">
-                                    <v-text-field v-model="formData.venue" label="Venue" readonly></v-text-field>
+                                     <v-text-field v-model="formData.eventName" label="Event Name" readonly></v-text-field>
                                 </v-col>
                             </v-row>
-                            <!-- Date and time -->
+                            <!-- Event Status -->
                             <v-row>
-                                <v-col cols="6">
-                                    <v-text-field v-model="formData.date" label="Date" readonly></v-text-field>
-                                </v-col>
-                                <v-col cols="6">
-                                    <v-text-field v-model="formData.time" label="Time" readonly></v-text-field>
+                                <v-col cols="12">
+                                     <v-text-field v-model="formData.status" label="Event Status"
+                                     readonly></v-text-field>
                                 </v-col>
                             </v-row>
-                            <!-- Price, Stock, and cancellation Fee -->
+                            <!-- Revenue -->
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="formData.totalRevenue" label="Total Revenue ($)" readonly></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="6">
+                                     <v-text-field v-model="formData.saleRevenue" label="Sales Revenue ($)" readonly></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                     <v-text-field v-model="formData.refundRevenue" label="Refunds Revenue ($)" readonly></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <!-- Sales -->
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="formData.sales" label="Sales" readonly></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <!-- Attendance, Refunds and Cancellations -->
                             <v-row>
                                 <v-col cols="4" sm="12">
-                                    <v-text-field v-model="formData.price" label="Price($)" readonly></v-text-field>
+                                    <v-text-field v-model="formData.attendance" label="Attendance" readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="4" sm="12">
-                                    <v-text-field v-model="formData.cancellationFee" label="Cancellation Fee($)"
-                                        readonly></v-text-field>
+                                    <v-text-field v-model="formData.noRefunds" label="Refunds" readonly></v-text-field>
                                 </v-col>
                                 <v-col cols="4" sm="12">
-                                    <v-text-field v-model="formData.stock" label="Stock" readonly></v-text-field>
+                                    <v-text-field v-model="formData.noCancelled" label="Cancellations" readonly></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -287,7 +309,7 @@ const generateReports = async () => {
                             <td>{{ event.stock }}</td>
                             <td>${{ event.cancellationFee }}</td>
                             <td>
-                                <v-btn variant="outlined" @click="viewDetails(event.eventId)">View Details</v-btn>
+                                <v-btn variant="outlined" @click="viewStats(event.eventId)">View Statistics</v-btn>
                                 <v-btn color="secondary" variant="outlined" @click="editEvent(event.eventId)">Edit Details</v-btn>
                                 <p v-if="event.status === 'Active'"> <v-btn color="error" variant="outlined" @click="cancelEvent(event.eventId)">Cancel Event</v-btn></p>
                                 <p v-else> <v-btn color="error" variant="outlined" :disabled="true">Cancel Event</v-btn></p>
