@@ -36,11 +36,10 @@ const message = ref('');
 const submitForm = async () => {
 
     let send_transaction_data = {
-        "eventId": 1, //ticket officer eventId
+        "eventId": localStorage.getItem("EventId"),
         "serial": code.value
     }
     code.value = ""; //clear form input
-
     const verifyTicketURL = "ticket/verify";
     await axios.post(verifyTicketURL, send_transaction_data)
         .then(async response => {

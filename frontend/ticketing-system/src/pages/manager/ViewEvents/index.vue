@@ -105,7 +105,7 @@ const viewStats = async (currEventId) => {
 }
 
 const editEvent = (currEventId) => {
- // router.push({ path: 'EditEventDetails/' + currEventId });
+ router.push({ path: 'viewevents/' + currEventId });
  // WIP, eventually it should redirect to the editing page
 
 }

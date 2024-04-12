@@ -59,27 +59,40 @@ public class TicketService {
 
     public BufferedImage generateTicketBarcode(int ticketId) {
         String serial = encryptTicketID(ticketId);
+        System.out.println("Serial: " + serial);
         return generateQRCodeImage(serial);
     }
 
     public Map<String, Object> verifyTicketSerial(String serial, int eventId) {
         int ticketId = decryptTicketId(serial);
         Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
+
+        System.out.println("EventId: " + eventId);
+
         Ticket ticket = optionalTicket.orElse(null);
+
         if (ticket == null) {
             throw new IllegalArgumentException("Invalid Ticket: Serial code does not exist");
         }
         if (ticket.getEventId() != eventId){
+            System.out.println("ticketEventId: " + ticket.getEventId());
             throw new IllegalArgumentException("Invalid Ticket: Ticket does not match eventId");
         }
 
         Map<String, Object> retMap = new HashMap<>();
         Event event = eventRepository.getReferenceById(ticket.getEventId());
-        Customer customer = customerRepository.getReferenceById(ticket.getUserId());
+        Optional<Customer> optionalCustomer = customerRepository.findById(ticket.getUserId());
+        Customer customer = optionalCustomer.orElse(null);
+        String username = "";
+        if(customer == null){
+            username = "Offline Sale";
+        }else{
+            username = customer.getUserName();
+        }
         //ticketId, eventName, Username, type, & status 
         retMap.put("ticketId", ticket.getTicketId());
         retMap.put("eventname", event.getEventName());
-        retMap.put("username", customer.getUserName());
+        retMap.put("username", username);
         retMap.put("type", ticket.getType());
         retMap.put("status", ticket.getStatus());
         return retMap;

@@ -20,13 +20,13 @@ export default [
         action: 'read',
         subject: 'Customer'
     },
-    // {
-    //     title: 'Dashboard',
-    //     to: { name: 'manager-Dashboard' },
-    //     icon: { icon: 'bx-home-alt' },
-    //     action: 'read',
-    //     subject: 'Manager'
-    // },
+    {
+        title: 'Dashboard',
+        to: { name: 'manager-Dashboard' },
+        icon: { icon: 'bx-home-alt' },
+        action: 'read',
+        subject: 'Manager'
+    },
     {
         title: 'Create Event',
         to: { name: 'manager-CreateEvent' },
@@ -48,13 +48,13 @@ export default [
         action: 'read',
         subject: 'TicketOfficer'
     },
-    // {
-    //     title: 'Issue Ticket',
-    //     to: { name: 'ticketOfficer-issueTicket?' },
-    //     icon: { icon: 'bx-edit' },
-    //     action: 'read',
-    //     subject: 'TicketOfficer'
-    // },
+    {
+        title: 'Issue Ticket',
+        to: { name: 'ticketOfficer-issue-ticket' },
+        icon: { icon: 'bx-edit' },
+        action: 'read',
+        subject: 'TicketOfficer'
+    },
     {
         title: 'Verify Tickets',
         to: { name: 'ticketOfficer-VerifyTicket' },

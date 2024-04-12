@@ -90,7 +90,7 @@ public class TransactionService {
         // Get Event
         Event event = eventRepository.getReferenceById(eventId);
 
-        for(Transaction transaction : transactionList){
+        for (Transaction transaction : transactionList) {
             TransactionTickets transactionTickets = new TransactionTickets(transaction);
             transactionTickets.setEventName(event.getEventName());
             List<Ticket> ticketList = ticketRepository.findByTransactionId(transaction.getTransactionId());
@@ -101,5 +101,10 @@ public class TransactionService {
             transactionTicketsList.add(transactionTickets);
         }
         return transactionTicketsList;
+    }
+
+    public List<Ticket> getTicketsByTransactionId(int transactionId) {
+        List<Ticket> ticketList = ticketRepository.findByTransactionId(transactionId);
+        return ticketList;
     }
 }

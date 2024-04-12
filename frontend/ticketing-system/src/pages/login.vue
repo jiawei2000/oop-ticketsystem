@@ -110,11 +110,11 @@ const login = async () => {
             if (response.data.userType == "Customer") {
                 router.push({ name: 'customer-Dashboard' });
             }
-            // else if (response.data.userType == "Manager") {
-            //     router.push({ name: 'managerDashboard' });
-            // } else if (response.data.userType == "TicketOfficer") {
-            //     router.push({ name: 'ticketOfficerDashboard' });
-            // }
+            else if (response.data.userType == "Manager") {
+                router.push({ name: 'manager-Dashboard' });
+            } else if (response.data.userType == "TicketOfficer") {
+                router.push({ name: 'ticketOfficer-Dashboard' });
+            }
 
         })
         .catch(error => {

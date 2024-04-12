@@ -34,7 +34,7 @@ public class TicketController {
     @PostMapping("/verify")
     public ResponseEntity<?> verifyTicket(@RequestBody Map<String, Object> body) {
         String serial = (String) body.get("serial");
-        int eventId = (Integer) body.get("eventId");
+        int eventId = Integer.parseInt((String) body.get("eventId"));
         try {
             Map<String, Object> response = ticketService.verifyTicketSerial(serial, eventId);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -49,7 +49,7 @@ public class TicketController {
     }
 
     @PutMapping("/updateTicketStatusToUsed/{ticketId}")
-    public ResponseEntity<?> updateTicketStatusToUsed(@PathVariable int ticketId){
+    public ResponseEntity<?> updateTicketStatusToUsed(@PathVariable int ticketId) {
         Ticket ticket = ticketService.updateTicketStatusToUsed(ticketId);
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
