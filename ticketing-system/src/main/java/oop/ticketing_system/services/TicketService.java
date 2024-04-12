@@ -66,14 +66,13 @@ public class TicketService {
     public Map<String, Object> verifyTicketSerial(String serial, int eventId) {
         int ticketId = decryptTicketId(serial);
         Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
-        
+
         Ticket ticket = optionalTicket.orElse(null);
 
         if (ticket == null) {
             throw new IllegalArgumentException("Invalid Ticket: Serial code does not exist");
         }
-        if (ticket.getEventId() != eventId){
-            System.out.println("ticketEventId: " + ticket.getEventId());
+        if (ticket.getEventId() != eventId) {
             throw new IllegalArgumentException("Invalid Ticket: Ticket does not match eventId");
         }
 
@@ -82,9 +81,11 @@ public class TicketService {
         Optional<Customer> optionalCustomer = customerRepository.findById(ticket.getUserId());
         Customer customer = optionalCustomer.orElse(null);
         String username = "";
-        if(customer == null){
+        if (ticket.getType().equals("Physical")) {
             username = "Offline Sale";
-        }else{
+        } else if (customer == null) {
+            throw new IllegalArgumentException("Customer Id " + ticket.getUserId() + " not found.");
+        } else {
             username = customer.getUserName();
         }
         //ticketId, eventName, Username, type, & status 
@@ -136,9 +137,9 @@ public class TicketService {
         }
     }
 
-    public Ticket updateTicketStatusToUsed(int ticketId){
+    public Ticket updateTicketStatusToUsed(int ticketId) {
         Ticket ticket = ticketRepository.getReferenceById(ticketId);
         ticket.setStatus("Used");
-        return ticketRepository.save(ticket); 
+        return ticketRepository.save(ticket);
     }
 }
