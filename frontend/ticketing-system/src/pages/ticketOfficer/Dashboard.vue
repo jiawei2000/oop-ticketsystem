@@ -13,46 +13,30 @@
                 <VCard>
                     <VCardText>
                         <div class="mb-10">
-                            <v-text>
-                                <v-icon>mdi-calendar</v-icon>
-                                Event Details
-                            </v-text>
+                            <v-icon>mdi-calendar</v-icon>
+                            Event Details
                         </div>
 
                         <div class="mb-3">
-                            <v-text>
-                                Name of Event: {{ this.event.eventName }}
-                            </v-text>
+                            Name of Event: {{ this.event.eventName }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Venue: {{ this.event.venue }}
-                            </v-text>
+                            Venue: {{ this.event.venue }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Date: {{ this.event.date }}
-                            </v-text>
+                            Date: {{ this.event.date }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Time: {{ this.event.time }}
-                            </v-text>
+                            Time: {{ this.event.time }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Price: {{ this.event.price }}
-                            </v-text>
+                            Price: {{ this.event.price }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Cancellation Fee: {{ this.event.cancellationFee }}
-                            </v-text>
+                            Cancellation Fee: {{ this.event.cancellationFee }}
                         </div>
                         <div class="mb-3">
-                            <v-text>
-                                Stock: {{ this.event.stock }}
-                            </v-text>
+                            Stock: {{ this.event.stock }}
                         </div>
                     </VCardText>
                 </VCard>
@@ -61,10 +45,8 @@
                 <VCard>
                     <VCardText>
                         <div class="mb-3">
-                            <v-text>
-                                <v-icon>mdi-history</v-icon>
-                                Transaction History
-                            </v-text>
+                            <v-icon>mdi-history</v-icon>
+                            Transaction History
                         </div>
                     </VCardText>
                     <VTable class="text-no-wrap">
@@ -97,7 +79,7 @@ export default {
     data() {
         return {
             transactionHistory: [],
-            event: null,
+            event: {},
             userId: localStorage.getItem('UserId'),
             username: localStorage.getItem('UserName'),
         };

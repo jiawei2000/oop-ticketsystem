@@ -13,23 +13,17 @@
                 <VCard>
                     <VCardText>
                         <div class="mb-3">
-                            <v-text>
-                                <v-icon>mdi-account</v-icon>
-                                User Balance
-                            </v-text>
+                            <v-icon>mdi-account</v-icon>
+                            User Balance
                         </div>
 
                         <div class="mb-10">
-                            <v-text>
-                                Credit Remaining: ${{ this.userBalance }}
-                            </v-text>
+                            Credit Remaining: ${{ this.userBalance }}
                         </div>
                     
                         <div>
-                            <v-text>
-                                <v-icon>mdi-ticket</v-icon>
-                                Purchased Tickets
-                            </v-text>
+                            <v-icon>mdi-ticket</v-icon>
+                            Purchased Tickets
                         </div>
                         <VTable class="text-no-wrap">
                             <thead>
@@ -58,10 +52,8 @@
                 <VCard>
                     <VCardText>
                         <div class="mb-3">
-                            <v-text>
-                                <v-icon>mdi-history</v-icon>
-                                Transaction History
-                            </v-text>
+                            <v-icon>mdi-history</v-icon>
+                            Transaction History
                         </div>
                     </VCardText>
                     <VTable class="text-no-wrap">
