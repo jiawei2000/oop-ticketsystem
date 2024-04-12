@@ -21,37 +21,37 @@
 
                         <div class="mb-3">
                             <v-text>
-                                Name of Event: 
+                                Name of Event: {{ this.event.eventName }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Venue:
+                                Venue: {{ this.event.venue }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Date:
+                                Date: {{ this.event.date }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Time:
+                                Time: {{ this.event.time }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Price:
+                                Price: {{ this.event.price }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Cancellation Fee:
+                                Cancellation Fee: {{ this.event.cancellationFee }}
                             </v-text>
                         </div>
                         <div class="mb-3">
                             <v-text>
-                                Stock:
+                                Stock: {{ this.event.stock }}
                             </v-text>
                         </div>
                     </VCardText>
@@ -103,7 +103,18 @@ export default {
         };
     },
     methods: {
-        
+        async fetchEvent() {
+            try {
+                const URL = `http://localhost:8080/api/events/${this.userId}`;
+                const response = await axios.get(URL);
+                this.event = response.data;
+            } catch (error) {
+                console.error("Error fetching customer balance:", error);
+            }
+        },
+    },
+    mounted() {
+        this.fetchEvent();
     }
 }
 </script>
