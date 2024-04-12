@@ -138,29 +138,23 @@ const generateReports = async () => {
     await axios.get(reportURL)
             .then(async response => {
                 // console.log(response.data);
-                var rows = [];
+                var rows = [["event_ID", "manager_ID", "event_name",
+                             "venue", "date", "total_revenue",
+                             "sales_revenue", "refund_revenue", "sales",
+                             "attendance", "refunds", "cancellations"]];
                 for (const eventData of response.data) {
                     rows.push(
-                      ["event_ID", eventData.event.eventId],
-                      ["manager_ID", eventData.event.managerId],
-                      ["event_name", eventData.event.eventName],
-                      ["venue", eventData.event.venue],
-                      ["date", eventData.event.date],
-                      ["total_revenue", eventData.totalRevenue],
-                      ["sales_revenue", eventData.saleRevenue],
-                      ["refund_revenue", eventData.refundRevenue],
-                      ["sales", eventData.sales],
-                      ["attendance", eventData.attendance],
-                      ["number_of_refunds", eventData.noRefunds],
-                      ["number_of_cancellations", eventData.noCancelled],
-                      ["", ""]
+                      [eventData.event.eventId, eventData.event.managerId, eventData.event.eventName,
+                      eventData.event.venue, eventData.event.date, eventData.totalRevenue,
+                      eventData.saleRevenue, eventData.refundRevenue, eventData.sales,
+                      eventData.attendance, eventData.noRefunds, eventData.noCancelled]
                     );
                 }
                 let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
                 var encodedUri = encodeURI(csvContent);
                 var link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "event_reports.csv");
+                link.setAttribute("download", "event_statistics_report.csv");
                  document.body.appendChild(link);
                  link.click();
                  console.log("Report Generated Successfully");
