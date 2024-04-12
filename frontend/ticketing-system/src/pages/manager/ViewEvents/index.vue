@@ -133,7 +133,7 @@ const cancelEvent = async (currEventId) => {
     }
 }
 
-const generateReports = async () => {
+const generateReport = async () => {
     const reportURL = "manager/getEventStatistics";
     await axios.get(reportURL)
             .then(async response => {
@@ -313,7 +313,7 @@ const generateReports = async () => {
                 </VTable>
             </VCardText>
         </VCard>
-        <v-btn color="primary" variant="elevated" @click="generateReports">Generate Reports</v-btn>
+        <v-btn color="primary" variant="elevated" @click="generateReport">Generate Report</v-btn>
     </section>
 </template>
 
