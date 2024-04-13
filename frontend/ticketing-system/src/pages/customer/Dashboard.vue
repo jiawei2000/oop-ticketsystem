@@ -62,6 +62,7 @@
                                 <th>Date</th>
                                 <th>Amount Spent</th>
                                 <th>Event</th>
+                                <th>Status</th>
                                 <th>Quantity</th>
                             </tr>
                         </thead>
@@ -71,6 +72,7 @@
                                 <td>{{ transaction.transaction.date }}</td>
                                 <td>{{ transaction.amountSpent }}</td>
                                 <td>{{ transaction.eventName }}</td>
+                                <td>{{ transaction.transaction.status }}</td>
                                 <td>{{ transaction.transaction.numTicketPurchased }}</td>
                             </tr>
                         </tbody>

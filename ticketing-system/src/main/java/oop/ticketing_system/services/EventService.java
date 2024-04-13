@@ -66,7 +66,7 @@ public class EventService {
         List<Ticket> tickets = ticketService.updateTicketStatusByEventId(eventId, "Cancelled");
         transactionService.updateTransactionStatusByEventId(eventId, "Cancelled");
         // Handle Refund
-        double refundAmount = event.getPrice() - event.getCancellationFee();
+        double refundAmount = event.getPrice();
         transactionService.refundUsersByEventId(eventId, refundAmount);
         event.setStatus("Cancelled");
         return eventRepository.save(event);
