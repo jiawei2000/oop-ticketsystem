@@ -1,1 +1,0 @@
-javac -d target/classes1 -cp "main/java/oop/ticketing_system/*;./pom.xml;./.mvn/wrapper/*" src\main\java\oop\ticketing_system\TicketingSystemApplication.java
